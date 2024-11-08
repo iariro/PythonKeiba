@@ -118,8 +118,9 @@ def get_char_count(value, width):
 
 def get_odds_list(html):
     soup = BeautifulSoup(html, "html.parser")
-    h1 = soup.find_all('h1')
-    print(h1[1].text)
+    h1 = soup.select("h1 span span[class='txt'] span[class='opt']")
+    date_line = soup.select("div[class='date_line']")
+    print(h1[0].text, date_line[0].contents[1].contents[3].text.strip())
     rows = soup.find_all('tr')
     horse_list = []
     for i, row in enumerate(rows):
@@ -145,5 +146,7 @@ def get_odds_list(html):
     horse_list = sorted(horse_list, key=lambda x: x['rank'])
     for horse in horse_list:
         name_width = get_char_count(horse['name'], 20)
-        rider_width = get_char_count(horse['rider'], 10)
+        rider_width = get_char_count(horse['rider'], 8)
         print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['rider']:{rider_width}s} {horse['odds']:>5} {horse['rank']}")
+    print()
+    return h1[0].text, horse_list
