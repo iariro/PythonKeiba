@@ -12,8 +12,8 @@ all_race_result = []
 race_list = keiba_lib.get_race_list(html)
 for race_url in race_list:
     html = keiba_lib.get_html_web(race_url, part=True)
-    (race_name, rank_list, win_yen, wide_yen) = keiba_lib.get_rank_list(html)
-    all_race_result.append((race_name, rank_list, win_yen, wide_yen))
+    (race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki) = keiba_lib.get_rank_list(html)
+    all_race_result.append((race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki))
     print(race_name)
 
 keiba_lib.analyze(all_race_result)

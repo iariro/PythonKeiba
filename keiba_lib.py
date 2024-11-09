@@ -57,16 +57,20 @@ def get_rank_list(html):
         if len(wide_div.contents) == 7:
             if wide_div.contents[1].text == f"{wide_horse_no_list[0]}-{wide_horse_no_list[1]}":
                 wide_yen = int(wide_div.contents[3].contents[0].replace(',', ''))
+    tierce_div_list = soup.select('li[class="tierce"] dl dd div')
+    tierce_yen = int(tierce_div_list[0].contents[3].text.replace(',' ,'').replace('円' ,''))
+    tierce_ninki = tierce_div_list[0].contents[5].text
 
-    return race_name, rank_list, win_yen, wide_yen
+    return race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki
 
 def analyze(all_race_result):
     tansho_list = []
     niren_list = []
     sanren_list = []
+    tierce_list = []
     win_yen_sum = 0
     wide_yen_sum = 0
-    for (race_name, rank_list, win_yen, wide_yen) in all_race_result:
+    for (race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki) in all_race_result:
         (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
         (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
         (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
@@ -79,6 +83,7 @@ def analyze(all_race_result):
 
         if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
             wide_yen_sum += wide_yen
+        tierce_list.append((race_name, tierce_yen, tierce_ninki))
 
     print(f'単勝を賭け続けて当たる額={win_yen_sum}円')
 
@@ -107,6 +112,12 @@ def analyze(all_race_result):
     print()
     atari = len([(n1, n2, n3) for n1, n2, n3 in sanren_list if n1 == 1 and n2 == 2 and n3 == 3])
     print(f'１番人気・２番人気・３番人気が３連単で勝つ確率={atari * 100 / total:.2f}%')
+
+    tierce_list = sorted(tierce_list, key=lambda race: race[1])
+    print('三連単の配当金')
+    for race in tierce_list:
+        print(f'{race[0]} {race[1]:,}円 {race[2]}')
+
     return tansho_list, niren_list, sanren_list
 
 def get_char_count(value, width):
@@ -120,7 +131,8 @@ def get_odds_list(html):
     soup = BeautifulSoup(html, "html.parser")
     h1 = soup.select("h1 span span[class='txt'] span[class='opt']")
     date_line = soup.select("div[class='date_line']")
-    print(h1[0].text, date_line[0].contents[1].contents[3].text.strip())
+    print(h1[0].text)
+    print(date_line[0].contents[1].contents[3].text.strip())
     rows = soup.find_all('tr')
     horse_list = []
     for i, row in enumerate(rows):
