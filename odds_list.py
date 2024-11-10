@@ -1,8 +1,15 @@
 import sys
 import keiba_lib
 
-date = sys.argv[1][-11:-3]
-url = sys.argv[1]
+url = None
+count_display = False
+for opt in sys.argv:
+    if opt.startswith('-url='):
+        url = opt[5:]
+    elif opt == '-count_display':
+        count_display = True
+
+date = url
 race_code = url[-2:]
 
 html = keiba_lib.get_html_web(url)
@@ -41,7 +48,7 @@ print('頭数の少ないレース')
 for i in range(5):
     print(count_list[i]['race_name'], count_list[i]['horse_count'])
 
-if False:
+if count_display:
     horse_count = sorted(horse_count.items(), key=lambda x:x[1], reverse=True)
     print(horse_count)
 

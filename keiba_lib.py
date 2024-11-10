@@ -83,7 +83,7 @@ def analyze(all_race_result):
 
         if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
             wide_yen_sum += wide_yen
-        tierce_list.append((race_name, tierce_yen, tierce_ninki))
+        tierce_list.append((race_name, tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
 
     print(f'単勝を賭け続けて当たる額={win_yen_sum}円')
 
@@ -116,7 +116,7 @@ def analyze(all_race_result):
     tierce_list = sorted(tierce_list, key=lambda race: race[1])
     print('三連単の配当金')
     for race in tierce_list:
-        print(f'{race[0]} {race[1]:,}円 {race[2]}')
+        print(f'{race[0]} {race[1]:,}円 {race[2]} {race[3]}')
 
     return tansho_list, niren_list, sanren_list
 
@@ -125,7 +125,7 @@ def get_char_count(value, width):
     for c in value:
         if unicodedata.east_asian_width(c) in "FWA":
             count += 1
-    return 20-count
+    return width-count
 
 def get_odds_list(html):
     soup = BeautifulSoup(html, "html.parser")
@@ -151,14 +151,14 @@ def get_odds_list(html):
                     horse['rank'] = int(m.group(3))
             elif j == 7:
                 if len(column.contents) >= 6:
-                    horse['rider'] = column.contents[5].text.strip().replace('☆', '')
-        if 'rider' in horse:
+                    horse['rider'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '')
+        if 'rider' in horse and 'rank'in horse:
             horse_list.append(horse)
 
     horse_list = sorted(horse_list, key=lambda x: x['rank'])
     for horse in horse_list:
         name_width = get_char_count(horse['name'], 20)
-        rider_width = get_char_count(horse['rider'], 8)
-        print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['rider']:{rider_width}s} {horse['odds']:>5} {horse['rank']}")
+        rider_width = get_char_count(horse['rider'], 15)
+        print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['rider']:{rider_width}s} {horse['odds']:>5} {horse['rank']:>2}")
     print()
     return h1[0].text, horse_list
