@@ -63,7 +63,7 @@ def get_rank_list(html):
 
     return race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki
 
-def analyze(all_race_result):
+def analyze(all_race_result, thresh_horse_count=None):
     tansho_list = []
     niren_list = []
     sanren_list = []
@@ -83,7 +83,7 @@ def analyze(all_race_result):
 
         if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
             wide_yen_sum += wide_yen
-        tierce_list.append((race_name, tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
+        tierce_list.append((race_name, len(rank_list), tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
 
     print(f'単勝を賭け続けて当たる額={win_yen_sum}円')
 
@@ -113,10 +113,34 @@ def analyze(all_race_result):
     atari = len([(n1, n2, n3) for n1, n2, n3 in sanren_list if n1 == 1 and n2 == 2 and n3 == 3])
     print(f'１番人気・２番人気・３番人気が３連単で勝つ確率={atari * 100 / total:.2f}%')
 
-    tierce_list = sorted(tierce_list, key=lambda race: race[1])
+    tierce_list = sorted(tierce_list, key=lambda race: race[2])
+    box2400_win = []
+    box6000_win = []
+    min_race_cnt = 0
     print('三連単の配当金')
+    print('|レース|頭数|配当金|人気|着順|馬券代|回収|')
+    print('|-|-|-|-|-|-|-|')
     for race in tierce_list:
-        print(f'{race[0]} {race[1]:,}円 {race[2]} {race[3]}')
+        m = re.match('レース結果....年(.*月.*日)（(..)）.*回(..).日 (.*)レース', race[0])
+        race_name = ' '.join((m.group(i) for i in (1, 2, 3, 4))) + 'R'
+        race_no = m.group(4)
+        max_ninki = max(race[4])
+        box_cost = max_ninki * (max_ninki - 1) * (max_ninki - 2) * 100
+        box_pay = '○' if box_cost < race[2] else '×'
+        chakujun = ','.join((str(n) for n in race[4]))
+        if thresh_horse_count and race[1] <= thresh_horse_count:
+            min_race_cnt += 1
+            if max_ninki <= 4:
+                box2400_win.append(race[2])
+            if max_ninki <= 5:
+                box6000_win.append(race[2])
+        print(f"|{race_name:20}|{race[1]:>4}頭|{race[2]:10,}円|{race[3].replace('人気',''):>8} | {chakujun:8}|{box_cost:10,}円|{box_pay}|")
+
+    print()
+    box2400_win_join = '+'.join((str(n) for n in box2400_win))
+    print(f"1-4番人気をボックス買いして得られる額：{box2400_win_join}={sum(box2400_win):,}円 馬券代：{2400*min_race_cnt:,}円")
+    box6000_win_join = '+'.join((str(n) for n in box6000_win))
+    print(f"1-5番人気をボックス買いして得られる額：{box6000_win_join}={sum(box6000_win):,}円 馬券代：{6000*min_race_cnt:,}円")
 
     return tansho_list, niren_list, sanren_list
 
