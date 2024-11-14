@@ -50,6 +50,9 @@ def get_rank_list(html):
     win_yen = soup.select('li[class="win"] dl dd div div[class="yen"]')
     win_yen = int(win_yen[0].contents[0].replace(',', ''))
 
+    umaren_yen = soup.select('li[class="umaren"] dl dd div div[class="yen"]')
+    umaren_yen = int(umaren_yen[0].contents[0].replace(',', ''))
+
     wide_yen = 0
     wide_horse_no_list = sorted((ninki_to_horse_no[1], ninki_to_horse_no[2]))
     wide_div_list = soup.select('li[class="wide"] dl dd div')
@@ -61,59 +64,74 @@ def get_rank_list(html):
     tierce_yen = int(tierce_div_list[0].contents[3].text.replace(',' ,'').replace('円' ,''))
     tierce_ninki = tierce_div_list[0].contents[5].text
 
-    return race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki
+    return race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki
 
-def analyze(all_race_result, thresh_horse_count=None):
+def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
     tansho_list = []
     niren_list = []
     sanren_list = []
     tierce_list = []
     win_yen_sum = 0
+    win_yen_sum345 = 0
+    umaren_yen_sum = 0
+    if tansho_target is None:
+        tansho_target = (3, 4, 5)
     wide_yen_sum = 0
-    for (race_name, rank_list, win_yen, wide_yen, tierce_yen, tierce_ninki) in all_race_result:
+    for (race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki) in all_race_result:
+        print(race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki)
         (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
         (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
         (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
-        tansho_list.append(ninki1)
-        niren_list.append((ninki1, ninki2))
-        sanren_list.append((ninki1, ninki2, ninki3))
+        if thresh_horse_count is None or len(rank_list) <= thresh_horse_count:
+            tansho_list.append(ninki1)
+            niren_list.append((ninki1, ninki2))
+            sanren_list.append((ninki1, ninki2, ninki3))
 
-        if ninki1 == 1:
-            win_yen_sum += win_yen
+            if ninki1 == 1:
+                win_yen_sum += win_yen
+            if ninki1 in tansho_target:
+                win_yen_sum345 += win_yen
 
-        if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
-            wide_yen_sum += wide_yen
+            if (ninki1 + ninki2) in (3, 4):
+                umaren_yen_sum += umaren_yen
+
+            if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
+                wide_yen_sum += wide_yen
         tierce_list.append((race_name, len(rank_list), tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
 
-    print(f'単勝を賭け続けて当たる額={win_yen_sum}円')
+    print(f'単勝を賭け続けて当たる額={win_yen_sum}円 {tansho_target}番人気={win_yen_sum345}円')
 
     print(tansho_list)
     total = len(tansho_list)
     atari = len([n for n in tansho_list if n == 1])
-    print(f'１番人気が単勝で勝つ確率={atari * 100 / total:.2f}%')
+    print(f'１番人気が単勝で勝つ確率={atari * 100 / total if total > 0 else 0:.2f}%')
 
     print()
+
+    print(f'馬連を賭け続けて当たる額={umaren_yen_sum}円')
     print(niren_list)
     atari = len([(n1, n2) for n1, n2 in niren_list if n1 + n2 == 1+2])
-    print(f'１番人気・２番人気が馬連で勝つ確率={atari * 100 / total:.2f}%')
+    atari13 = len([(n1, n2) for n1, n2 in niren_list if n1 + n2 == 1+3])
+    print(f'１番人気・２番人気が馬連で勝つ確率={atari * 100 / total if total > 0 else 0:.2f}% + {atari13 * 100 / total if total > 0 else 0:.2f}%')
     print()
     atari = len([(n1, n2) for n1, n2 in niren_list if n1 == 1 and n2 == 2])
-    print(f'１番人気・２番人気が馬単で勝つ確率={atari * 100 / total:.2f}%')
+    print(f'１番人気・２番人気が馬単で勝つ確率={atari * 100 / total if total > 0 else 0:.2f}%')
     print()
 
     print(f'ワイドを賭け続けて当たる額={wide_yen_sum}円')
 
     print(sanren_list)
     atari = len([(n1, n2, n3) for n1, n2, n3 in sanren_list if 1 in (n1, n2, n3) and 2 in (n1, n2, n3)])
-    print(f'１番人気・２番人気がワイドで勝つ確率={atari * 100 / total:.2f}%')
+    print(f'１番人気・２番人気がワイドで勝つ確率={atari * 100 / total if total > 0 else 0:.2f}%')
     print()
     atari = len([(n1, n2, n3) for n1, n2, n3 in sanren_list if n1 + n2 + n3 == 1+2+3])
-    print(f'１番人気・２番人気・３番人気が３連複で勝つ確率={atari * 100 / total:.2f}%')
+    print(f'１番人気・２番人気・３番人気が３連複で勝つ確率={atari * 100 / total if total > 0 else 0:.2f}%')
     print()
     atari = len([(n1, n2, n3) for n1, n2, n3 in sanren_list if n1 == 1 and n2 == 2 and n3 == 3])
-    print(f'１番人気・２番人気・３番人気が３連単で勝つ確率={atari * 100 / total:.2f}%')
+    print(f'１番人気・２番人気・３番人気が３連単で勝つ確率={atari * 100 / total if total > 0 else 0:.2f}%')
 
     tierce_list = sorted(tierce_list, key=lambda race: race[2])
+    box600_win = []
     box2400_win = []
     box6000_win = []
     min_race_cnt = 0
@@ -128,8 +146,10 @@ def analyze(all_race_result, thresh_horse_count=None):
         box_cost = max_ninki * (max_ninki - 1) * (max_ninki - 2) * 100
         box_pay = '○' if box_cost < race[2] else '×'
         chakujun = ','.join((str(n) for n in race[4]))
-        if thresh_horse_count and race[1] <= thresh_horse_count:
+        if thresh_horse_count is None or race[1] <= thresh_horse_count:
             min_race_cnt += 1
+            if max_ninki <= 3:
+                box600_win.append(race[2])
             if max_ninki <= 4:
                 box2400_win.append(race[2])
             if max_ninki <= 5:
@@ -137,6 +157,8 @@ def analyze(all_race_result, thresh_horse_count=None):
         print(f"|{race_name:20}|{race[1]:>4}頭|{race[2]:10,}円|{race[3].replace('人気',''):>8} | {chakujun:8}|{box_cost:10,}円|{box_pay}|")
 
     print()
+    box600_win_join = '+'.join((str(n) for n in box600_win))
+    print(f"1-3番人気をボックス買いして得られる額：{box600_win_join}={sum(box600_win):,}円 馬券代：{600*min_race_cnt:,}円")
     box2400_win_join = '+'.join((str(n) for n in box2400_win))
     print(f"1-4番人気をボックス買いして得られる額：{box2400_win_join}={sum(box2400_win):,}円 馬券代：{2400*min_race_cnt:,}円")
     box6000_win_join = '+'.join((str(n) for n in box6000_win))
