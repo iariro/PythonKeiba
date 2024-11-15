@@ -78,7 +78,6 @@ def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
         tansho_target = (3, 4, 5)
     wide_yen_sum = 0
     for (race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki) in all_race_result:
-        print(race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki)
         (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
         (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
         (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
