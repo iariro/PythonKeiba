@@ -42,8 +42,9 @@ def get_rank_list(html):
             rank = int(cell_list[1].text)
             horse_no = int(cell_list[5].text)
             horse_name = ''.join(cell_list[7].text.split())
+            jocky = cell_list[13].text
             ninki = int(cell_list[27].text)
-            rank_list.append((rank, horse_no, horse_name, ninki))
+            rank_list.append((rank, horse_no, horse_name, jocky, ninki))
             ninki_to_horse_no[ninki] = horse_no
         except:
             pass
@@ -64,9 +65,39 @@ def get_rank_list(html):
     tierce_yen = int(tierce_div_list[0].contents[3].text.replace(',' ,'').replace('円' ,''))
     tierce_ninki = tierce_div_list[0].contents[5].text
 
-    return race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki
+    trio_yen = soup.select('li[class="trio"] dl dd div[class="yen"]')
+    trio_yen = int(trio_yen[0].text.replace(',' ,'').replace('円' ,''))
 
-def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
+    return race_name, rank_list, win_yen, umaren_yen, wide_yen, trio_yen, tierce_yen, tierce_ninki
+
+def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
+    tierce_list = []
+    for race_result in all_race_result:
+        race_name = race_result['race_name']
+        rank_list = race_result['rank_list']
+        tierce_yen = race_result['tierce_yen']
+        tierce_ninki = race_result['tierce_ninki']
+
+        (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
+        (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
+        (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
+
+        tierce_list.append((race_name, len(rank_list), tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
+
+    tierce_list = sorted(tierce_list, key=lambda race: race[2])
+    print('|レース|頭数|配当金|人気|着順|馬券代|回収|')
+    print('|-|-|-|-|-|-|-|')
+    for race in tierce_list:
+        m = re.match('レース結果....年(.*月.*日)（(..)）.*回(..).日 (.*)レース', race[0])
+        race_name = ' '.join((m.group(i) for i in (1, 2, 3, 4))) + 'R'
+        race_no = m.group(4)
+        max_ninki = max(race[4])
+        box_cost = max_ninki * (max_ninki - 1) * (max_ninki - 2) * 100
+        box_pay = '○' if box_cost < race[2] else '×'
+        chakujun = ','.join((str(n) for n in race[4]))
+        print(f"|{race_name:20}|{race[1]:>4}頭|{race[2]:10,}円|{race[3].replace('人気',''):>8} | {chakujun:8}|{box_cost:10,}円|{box_pay}|")
+
+def analyze(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
     tansho_list = []
     niren_list = []
     sanren_list = []
@@ -74,10 +105,26 @@ def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
     win_yen_sum = 0
     win_yen_sum345 = 0
     umaren_yen_sum = 0
+    tierce12_yen_list = []
+    tierce12_kake_sum = 0
+    trio12_345_yen_list = []
+    tierce12_345_yen_list = []
+    tierce12_345_kake_sum = 0
     if tansho_target is None:
         tansho_target = (3, 4, 5)
+    if tierce12_nagashi is None:
+        tierce12_nagashi = (3, 4, 5)
     wide_yen_sum = 0
-    for (race_name, rank_list, win_yen, umaren_yen, wide_yen, tierce_yen, tierce_ninki) in all_race_result:
+    for race_result in all_race_result:
+        race_name = race_result['race_name']
+        rank_list = race_result['rank_list']
+        win_yen = race_result['win_yen']
+        umaren_yen = race_result['umaren_yen']
+        wide_yen = race_result['wide_yen']
+        trio_yen = race_result['trio_yen']
+        tierce_yen = race_result['tierce_yen']
+        tierce_ninki = race_result['tierce_ninki']
+
         (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
         (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
         (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
@@ -94,8 +141,17 @@ def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
             if (ninki1 + ninki2) in (3, 4):
                 umaren_yen_sum += umaren_yen
 
-            if (1 in (ninki1, ninki2, ninki3)) and (2 in (ninki1, ninki2, ninki3)):
+            if ninki1 == 1 and ninki2 == 2:
                 wide_yen_sum += wide_yen
+                tierce12_yen_list.append(tierce_yen)
+            tierce12_kake_sum += len(rank_list) - 2
+
+            if (ninki1 + ninki2 == 3 and ninki3 in tierce12_nagashi) or \
+               (ninki1 + ninki3 == 3 and ninki2 in tierce12_nagashi) or \
+               (ninki2 + ninki3 == 3 and ninki1 in tierce12_nagashi):
+                trio12_345_yen_list.append(trio_yen)
+                tierce12_345_yen_list.append(tierce_yen)
+
         tierce_list.append((race_name, len(rank_list), tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
 
     print(f'単勝を賭け続けて当たる額={win_yen_sum}円 {tansho_target}番人気={win_yen_sum345}円')
@@ -162,6 +218,11 @@ def analyze(all_race_result, thresh_horse_count=None, tansho_target=None):
     print(f"1-4番人気をボックス買いして得られる額：{box2400_win_join}={sum(box2400_win):,}円 馬券代：{2400*min_race_cnt:,}円")
     box6000_win_join = '+'.join((str(n) for n in box6000_win))
     print(f"1-5番人気をボックス買いして得られる額：{box6000_win_join}={sum(box6000_win):,}円 馬券代：{6000*min_race_cnt:,}円")
+    print(f"1-2番人気流しで得られる額：{tierce12_yen_list}={sum(tierce12_yen_list):,}円 馬券代：{tierce12_kake_sum*600:,}円")
+    tierce12_345_bakendai = 100 * len(tierce12_nagashi) * 3 * len(all_race_result)
+    print(f"1-2番人気+3-5番人気で得られる額：{tierce12_345_yen_list}={sum(tierce12_345_yen_list):,}円 馬券代：{tierce12_345_bakendai:,}円")
+    trio12_345_bakendai = 100 * len(tierce12_nagashi) * len(all_race_result)
+    print(f"1-2番人気+3-5番人気の三連複で得られる額：{trio12_345_yen_list}={sum(trio12_345_yen_list):,}円 馬券代：{trio12_345_bakendai:,}円")
 
     return tansho_list, niren_list, sanren_list
 
