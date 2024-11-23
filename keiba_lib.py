@@ -31,6 +31,10 @@ def get_rank_list(html):
     soup = BeautifulSoup(html, "html.parser")
     h1 = soup.select('h1 span')
     race_name = h1[0].text
+
+    h2 = soup.select("div[class='race_title'] div div h2 span span")
+    race_title = h2[0].text
+
     row_list = soup.select('table[class="basic narrow-xy striped"] tr')
     rank_list = []
     ninki_to_horse_no = {}
@@ -54,11 +58,16 @@ def get_rank_list(html):
     umaren_yen = soup.select('li[class="umaren"] dl dd div div[class="yen"]')
     umaren_yen = int(umaren_yen[0].contents[0].replace(',', ''))
 
+    umatan_yen = soup.select('li[class="umatan"] dl dd div div[class="yen"]')
+    umatan_yen = int(umatan_yen[0].contents[0].replace(',', ''))
+
     wide_yen = 0
+    wide_yen_list = {}
     wide_horse_no_list = sorted((ninki_to_horse_no[1], ninki_to_horse_no[2]))
     wide_div_list = soup.select('li[class="wide"] dl dd div')
     for wide_div in wide_div_list:
         if len(wide_div.contents) == 7:
+            wide_yen_list[wide_div.contents[1].text] = int(wide_div.contents[3].contents[0].replace(',', ''))
             if wide_div.contents[1].text == f"{wide_horse_no_list[0]}-{wide_horse_no_list[1]}":
                 wide_yen = int(wide_div.contents[3].contents[0].replace(',', ''))
     tierce_div_list = soup.select('li[class="tierce"] dl dd div')
@@ -68,7 +77,7 @@ def get_rank_list(html):
     trio_yen = soup.select('li[class="trio"] dl dd div[class="yen"]')
     trio_yen = int(trio_yen[0].text.replace(',' ,'').replace('円' ,''))
 
-    return race_name, rank_list, win_yen, umaren_yen, wide_yen, trio_yen, tierce_yen, tierce_ninki
+    return race_name, race_title, rank_list, win_yen, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki
 
 def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
     tierce_list = []
@@ -78,9 +87,9 @@ def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None,
         tierce_yen = race_result['tierce_yen']
         tierce_ninki = race_result['tierce_ninki']
 
-        (rank1, horse_no1, horse_name1, ninki1) = rank_list[0]
-        (rank2, horse_no2, horse_name2, ninki2) = rank_list[1]
-        (rank3, horse_no3, horse_name3, ninki3) = rank_list[2]
+        (rank1, horse_no1, horse_name1, jocky1, ninki1) = rank_list[0]
+        (rank2, horse_no2, horse_name2, jocky2, ninki2) = rank_list[1]
+        (rank3, horse_no3, horse_name3, jocky3, ninki3) = rank_list[2]
 
         tierce_list.append((race_name, len(rank_list), tierce_yen, tierce_ninki, (ninki1, ninki2, ninki3)))
 
@@ -237,7 +246,10 @@ def get_odds_list(html):
     soup = BeautifulSoup(html, "html.parser")
     h1 = soup.select("h1 span span[class='txt'] span[class='opt']")
     date_line = soup.select("div[class='date_line']")
-    print(h1[0].text)
+
+    h2 = soup.select("div[class='race_title'] div div h2 span span")
+
+    print(h1[0].text, ' '.join([span.text for span in h2]))
     print(date_line[0].contents[1].contents[3].text.strip())
     rows = soup.find_all('tr')
     horse_list = []
