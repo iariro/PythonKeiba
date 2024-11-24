@@ -27,7 +27,7 @@ else:
 race_list = keiba_lib.get_race_list(html)
 for race_url in race_list:
     html = keiba_lib.get_html_web(race_url, part=True)
-    (race_name, race_title, rank_list, win_yen, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki) = keiba_lib.get_rank_list(html)
+    (race_name, race_title, grade, rank_list, win_yen, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki) = keiba_lib.get_rank_list(html)
     m = re.match('レース結果(.*)年(.*)月(.*)日（(.)曜）.回(.*)[0-9]日 (.*)レース', race_name)
     if m:
         if m.group(5) == '東京':
@@ -42,6 +42,7 @@ for race_url in race_list:
         race_json[day][location][m.group(6)] = {
             'race_name': race_name,
             'race_title': race_title,
+            'grade': grade,
             'rank_list': rank_list,
             'win_yen': win_yen,
             'umaren_yen': umaren_yen,
