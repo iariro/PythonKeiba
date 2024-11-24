@@ -2,19 +2,19 @@ import json
 import sys
 import keiba_lib
 
-trio_no = None
+ninki_pattern = None
 youbi = None
 race_filter = None
 for arg in sys.argv:
-    if arg.startswith('-trio_no='):
-        trio_no = [int(n) for n in arg[arg.index('=')+1:].split(',')]
+    if arg.startswith('-ninki='):
+        ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
 
-if trio_no is None:
-    trio_no = [1, 2, 3]
+if ninki_pattern is None:
+    ninki_pattern = [1, 2, 3]
 
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
@@ -42,7 +42,7 @@ with open('race_result.json') as race_json_file:
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
                 (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
                 ninki_list = (ninki1, ninki2, ninki3)
-                if trio_no[0] in ninki_list and trio_no[1] in ninki_list and trio_no[2] in ninki_list:
+                if ninki_pattern[0] in ninki_list and ninki_pattern[1] in ninki_list and ninki_pattern[2] in ninki_list:
                     trio_yen_sum.append(result['trio_yen'])
                     subtrio_yen_sum.append(result['trio_yen'])
                 subtotal_bet += 100

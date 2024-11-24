@@ -40,6 +40,8 @@ https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1008202406060120241117/18
 
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202405070120241123/03
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202406070120241123/12
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202405080120241124/33
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202406080120241124/42
 EOF`
 do
   python3 download_result.py -url=$url

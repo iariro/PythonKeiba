@@ -2,13 +2,13 @@ import json
 import sys
 import keiba_lib
 
-ninki_limit = None
+ninki_pattern = [1]
 youbi = None
 race_filter = None
 histo = False
 for arg in sys.argv:
-    if arg.startswith('-ninki_limit='):
-        ninki_limit = int(arg[arg.index('=')+1:])
+    if arg.startswith('-ninki='):
+        ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
@@ -44,7 +44,7 @@ with open('race_result.json') as race_json_file:
                             continue
 
                 (rank, horse_no, horse_name, jocky, ninki) = result['rank_list'][0]
-                if ninki == 1:
+                if ninki in ninki_pattern:
                     top_win_yen_sum.append(result['win_yen'])
                     total_win_yen_sum += result['win_yen']
                 if max_win_yen < result['win_yen']:
@@ -52,9 +52,9 @@ with open('race_result.json') as race_json_file:
                 top_ninki_list.append(ninki)
                 ninki_histo[ninki] += 1
 
-                subtotal_bet += 100 * ninki_limit
-                total_bet += 100 * ninki_limit
-                if ninki_limit is None or ninki <= ninki_limit:
+                subtotal_bet += 100 * len(ninki_pattern)
+                total_bet += 100 * len(ninki_pattern)
+                if ninki in ninki_pattern:
                     total_total_win_yen_sum.append(result['win_yen'])
             print(f"{day} {location} 掛け金={subtotal_bet:5,}円 配当={total_win_yen_sum:5,}円 トップの人気：{' '.join([str(n) for n in top_ninki_list])}")
 

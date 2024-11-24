@@ -2,22 +2,28 @@ import json
 import sys
 import keiba_lib
 
-tierce_no = None
+ninki_pattern = None
 youbi = None
 race_filter = None
+box_width = 3
+nagashi = None
 for arg in sys.argv[1:]:
-    if arg.startswith('-tierce_no='):
-        tierce_no = [int(n) for n in arg[arg.index('=')+1:].split(',')]
+    if arg.startswith('-ninki='):
+        ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
+    elif arg.startswith('-box_width='):
+        box_width = int(arg[arg.index('=')+1:])
+    elif arg.startswith('-nagashi='):
+        nagashi = int(arg[arg.index('=')+1:])
     else:
         print('err', arg)
         sys.exit()
 
-if tierce_no is None:
-    tierce_no = [1, 2, 3]
+if ninki_pattern is None:
+    ninki_pattern = [1, 2, 3]
 
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
@@ -46,17 +52,25 @@ with open('race_result.json') as race_json_file:
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
                 (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
-                if tierce_no[0] == ninki1 and tierce_no[1] == ninki2 and tierce_no[2] == ninki3:
+                if ninki_pattern[0] == ninki1 and ninki_pattern[1] == ninki2 and ninki_pattern[2] == ninki3:
                     total_tierce_yen.append(result['tierce_yen'])
                     subtotal_tierce_yen.append(result['tierce_yen'])
-                ninki_list = (ninki1, ninki2, ninki3)
-                if tierce_no[0] in ninki_list and tierce_no[1] in ninki_list and tierce_no[2] in ninki_list:
-                    total_tiercebox_yen.append(result['tierce_yen'])
-                    subtotal_tiercebox_yen.append(result['tierce_yen'])
+                if all(ninki <= box_width for ninki in (ninki1, ninki2, ninki3)):
+                    if nagashi is None or ninki1 == nagashi:
+                        total_tiercebox_yen.append(result['tierce_yen'])
+                        subtotal_tiercebox_yen.append(result['tierce_yen'])
                 subtotal_bet += 100
                 total_bet += 100
-            print(f"{day} {location} {subtotal_bet:,}円 {subtotal_tierce_yen}={sum(subtotal_tierce_yen):,}円 {subtotal_tiercebox_yen}={sum(subtotal_tiercebox_yen):,}円")
+                if nagashi is not None:
+                    subtotal_box_bet = subtotal_bet * (box_width - 1) * (box_width - 2)
+                else:
+                    subtotal_box_bet = subtotal_bet * box_width * (box_width - 1) * (box_width - 2)
+            print(f"{day} {location} {subtotal_bet:,}円→{subtotal_tierce_yen}={sum(subtotal_tierce_yen):,}円 {subtotal_box_bet:,}円→{subtotal_tiercebox_yen}={sum(subtotal_tiercebox_yen):,}円")
 
 print()
 print(f"1-3番人気三連単    賭け金：{total_bet:,}円 配当金：{sum(total_tierce_yen):,}円")
-print(f"1-3番人気三連単box 賭け金：{total_bet*6:,}円 配当金：{sum(total_tiercebox_yen):,}円")
+if nagashi is not None:
+    total_box_bet = total_bet * (box_width - 1) * (box_width - 2)
+else:
+    total_box_bet = total_bet * box_width * (box_width - 1) * (box_width - 2)
+print(f"1-{box_width}番人気三連単box 賭け金：{total_box_bet:,}円 配当金：{sum(total_tiercebox_yen):,}円")

@@ -4,20 +4,20 @@ import keiba_lib
 
 youbi = None
 race_filter = None
-dual_no = None
+ninki_pattern = None
 location_filter = None
 for arg in sys.argv:
     if arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
-    elif arg.startswith('-dual_no='):
-        dual_no = [int(n) for n in arg[arg.index('=')+1:].split(',')]
+    elif arg.startswith('-ninki='):
+        ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-location='):
         location_filter = arg[arg.index('=')+1:]
 
-if dual_no is None:
-    dual_no = [1, 2]
+if ninki_pattern is None:
+    ninki_pattern = [1, 2]
 
 bet_yen = 0
 total_umaren = 0
@@ -56,15 +56,15 @@ with open('race_result.json') as race_json_file:
 
                 race_cnt += 1
                 bet_yen += 100
-                if dual_no[0] in (ninki1, ninki2) and dual_no[1] in (ninki1, ninki2):
+                if ninki_pattern[0] in (ninki1, ninki2) and ninki_pattern[1] in (ninki1, ninki2):
                     subtotal_umaren.append(result['umaren_yen'])
                     total_umaren += result['umaren_yen']
-                if ninki1 == dual_no[0] and ninki2 == dual_no[1]:
+                if ninki1 == ninki_pattern[0] and ninki2 == ninki_pattern[1]:
                     subtotal_umatan.append(result['umatan_yen'])
                     total_umatan += result['umatan_yen']
                 ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
-                if dual_no[0] in ninki_to_horseno and dual_no[1] in ninki_to_horseno:
-                    horse_no12 = '-'.join([str(n) for n in sorted((ninki_to_horseno[dual_no[0]], ninki_to_horseno[dual_no[1]]))])
+                if ninki_pattern[0] in ninki_to_horseno and ninki_pattern[1] in ninki_to_horseno:
+                    horse_no12 = '-'.join([str(n) for n in sorted((ninki_to_horseno[ninki_pattern[0]], ninki_to_horseno[ninki_pattern[1]]))])
                     subtotal_wide.append(result['wide_yen_list'][horse_no12])
                     total_wide += result['wide_yen_list'][horse_no12]
 
