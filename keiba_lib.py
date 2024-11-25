@@ -67,6 +67,11 @@ def get_rank_list(html):
     win_yen = soup.select('li[class="win"] dl dd div div[class="yen"]')
     win_yen = int(win_yen[0].contents[0].replace(',', ''))
 
+    place_yen_list = {}
+    place_div_list = soup.select("li[class='place'] dl dd div[class='line']")
+    for place_div in place_div_list:
+        place_yen_list[place_div.contents[1].text] = int(place_div.contents[3].text.replace(',' ,'').replace('円', ''))
+
     umaren_yen = soup.select('li[class="umaren"] dl dd div div[class="yen"]')
     umaren_yen = int(umaren_yen[0].contents[0].replace(',', ''))
 
@@ -74,11 +79,12 @@ def get_rank_list(html):
     umatan_yen = int(umatan_yen[0].contents[0].replace(',', ''))
 
     wide_yen_list = {}
-    wide_horse_no_list = sorted((ninki_to_horse_no[1], ninki_to_horse_no[2]))
-    wide_div_list = soup.select('li[class="wide"] dl dd div')
-    for wide_div in wide_div_list:
-        if len(wide_div.contents) == 7:
-            wide_yen_list[wide_div.contents[1].text] = int(wide_div.contents[3].contents[0].replace(',', ''))
+    if 1 in ninki_to_horse_no and 2 in ninki_to_horse_no:
+        wide_horse_no_list = sorted((ninki_to_horse_no[1], ninki_to_horse_no[2]))
+        wide_div_list = soup.select('li[class="wide"] dl dd div')
+        for wide_div in wide_div_list:
+            if len(wide_div.contents) == 7:
+                wide_yen_list[wide_div.contents[1].text] = int(wide_div.contents[3].contents[0].replace(',', ''))
     tierce_div_list = soup.select('li[class="tierce"] dl dd div')
     tierce_yen = int(tierce_div_list[0].contents[3].text.replace(',' ,'').replace('円' ,''))
     tierce_ninki = tierce_div_list[0].contents[5].text
@@ -86,7 +92,7 @@ def get_rank_list(html):
     trio_yen = soup.select('li[class="trio"] dl dd div[class="yen"]')
     trio_yen = int(trio_yen[0].text.replace(',' ,'').replace('円' ,''))
 
-    return race_name, race_title, grade, rank_list, win_yen, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki
+    return race_name, race_title, grade, rank_list, win_yen, place_yen_list, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki
 
 def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
     tierce_list = []
