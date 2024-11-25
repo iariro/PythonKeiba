@@ -27,8 +27,8 @@ with open('race_result.json') as race_json_file:
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
                 (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
-                tierce_list.append({'day': day, 'location': location, 'race_no': race_no, 'ninki': (ninki1, ninki2, ninki3), 'tierce_yen': result['tierce_yen']})
+                tierce_list.append({'day': day, 'location': location, 'race_no': race_no, 'race_title': result['race_title'], 'grade': result['grade'], 'ninki': (ninki1, ninki2, ninki3), 'tierce_yen': result['tierce_yen']})
 
 tierce_list = sorted(tierce_list, key=lambda race: race['tierce_yen'])
 for race in tierce_list:
-    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {','.join([str(n) for n in race['ninki']]):8} {race['tierce_yen']:>9,}円")
+    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {','.join([str(n) for n in race['ninki']]):8} {race['tierce_yen']:>9,}円 {race['race_title']} {race['grade']}")
