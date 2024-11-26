@@ -166,3 +166,42 @@ def get_odds_list(html):
         print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['rider']:{rider_width}s} {horse['odds']:>5} {horse['rank']:>2}")
     print()
     return h1[0].text, horse_list
+
+def get_start_end(pattern):
+    if '-' in pattern:
+        (s, e) = pattern.split('-')
+    else:
+        s = e = pattern
+    return int(s), int(e)
+
+def nagashi_pattern(n, pattern, ninki):
+    cnt = 0
+    atari_tierce = False
+    atari_trio = False
+    if pattern[0] != '*':
+        s1, e1 = get_start_end(pattern[0])
+    if pattern[1] != '*':
+        s2, e2 = get_start_end(pattern[1])
+    if pattern[2] != '*':
+        s3, e3 = get_start_end(pattern[2])
+    for i in range(1, n+1):
+        if pattern[0] == '*' or s1 <= i <= e1:
+            for j in range(1, n+1):
+                if i == j:
+                    continue
+                if pattern[1] == '*' or s2 <= j <= e2:
+                    for k in range(1, n+1):
+                        if i == k or j == k:
+                            continue
+                        if pattern[2] == '*' or s3 <= k <= e3:
+                            cnt += 1
+                            if i == ninki[0] and j == ninki[1] and k == ninki[2]:
+                                atari_tierce = True
+                            if i in ninki and j in ninki and k in ninki:
+                                atari_trio = True
+    return cnt, atari_tierce, atari_trio
+
+if __name__ == '__main__':
+    print(nagashi_pattern(10, ('1','2-3','2-3'), (1,2,3)))
+    print(nagashi_pattern(10, ('1','2-3','2-3'), (3,2,1)))
+    print(nagashi_pattern(10, ('1','2-3','2-3'), (4,2,1)))

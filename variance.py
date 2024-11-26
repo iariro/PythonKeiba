@@ -2,11 +2,25 @@ import json
 import sys
 import keiba_lib
 
+youbi = None
+location_filter = None
+for arg in sys.argv:
+    if arg.startswith('-youbi='):
+        youbi = arg[arg.index('=')+1:]
+    elif arg.startswith('-location='):
+        location_filter = arg[arg.index('=')+1:]
+
 race_digest_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
+        if youbi is not None and day[11] != youbi:
+            continue
+
         for location in race_json[day]:
+            if location_filter is not None and location != location_filter:
+                continue
+
             total_variance = 0
             for race_no, result in race_json[day][location].items():
                 variance = 0

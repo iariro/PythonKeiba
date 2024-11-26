@@ -5,6 +5,7 @@ import keiba_lib
 display_tansho_rank = False
 ninki_pattern = [1]
 youbi = None
+location_filter = None
 race_filter = None
 histo = False
 for arg in sys.argv:
@@ -12,6 +13,8 @@ for arg in sys.argv:
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
+    elif arg.startswith('-location='):
+        location_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-tansho_rank'):
@@ -20,6 +23,7 @@ for arg in sys.argv:
 print('１番人気だけ買い続けた場合')
 
 tansho_rank = []
+jun_histo = {jun: 0 for jun in range(1, 19)}
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     total_bet = 0
@@ -30,6 +34,9 @@ with open('race_result.json') as race_json_file:
             continue
 
         for location in race_json[day]:
+            if location_filter is not None and location != location_filter:
+                continue
+
             win_yen_sum = []
             top_ninki_list = []
             top_win_yen_sum = []
@@ -57,10 +64,12 @@ with open('race_result.json') as race_json_file:
                     max_win_yen = result['win_yen']
                 top_ninki_list.append(ninki)
                 ninki_histo[ninki] += 1
+                jun_histo[ninki] += result['win_yen']
 
                 subtotal_bet += 100 * len(ninki_pattern)
                 total_bet += 100 * len(ninki_pattern)
                 if ninki in ninki_pattern:
+                    #print(rank, horse_no, horse_name, jocky, ninki)
                     total_total_win_yen_sum.append(result['win_yen'])
                 tansho_rank.append({'day': day, 'location': location, 'race_no': race_no, 'horse_cnt': len(result['rank_list']), 'ninki': ninki, 'win_yen': result['win_yen']})
 
@@ -77,3 +86,6 @@ if display_tansho_rank:
     tansho_rank = sorted(tansho_rank, key=lambda tansho: tansho['win_yen'])
     for tansho in tansho_rank:
         print(f"{tansho['day']} {tansho['location']} {tansho['race_no']:>2}R {tansho['horse_cnt']:>2}頭 {tansho['ninki']:>2}番人気 {tansho['win_yen']:>6,}円")
+
+for jun, yen in jun_histo.items():
+    print(f'{jun:>2}番人気 {yen:>6,}円', '*' * (yen // 1000))
