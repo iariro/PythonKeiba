@@ -1,3 +1,5 @@
+#!/opt/anaconda3/bin/python3
+
 import json
 import sys
 import keiba_lib
@@ -93,4 +95,5 @@ if nagashi is not None:
 else:
     total_box_bet = total_bet * box_width * (box_width - 1) * (box_width - 2)
 print(f"1-{box_width}番人気三連単box 賭け金：{total_box_bet:,}円 配当金：{sum(total_tiercebox_yen):,}円")
-print(f"{','.join(nagashi)}番人気三連単流し 賭け金：{sum(total_nagashi_bet):,}円 配当金：{sum(total_nagashi_yen):,}円")
+if nagashi:
+    print(f"{','.join(nagashi)}番人気三連単流し 賭け金：{sum(total_nagashi_bet):,}円 配当金：{sum(total_nagashi_yen):,}円")

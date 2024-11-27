@@ -1,3 +1,5 @@
+#!/opt/anaconda3/bin/python3
+
 import json
 import sys
 import keiba_lib
@@ -66,8 +68,10 @@ with open('race_result.json') as race_json_file:
                 ninki_histo[ninki] += 1
                 jun_histo[ninki] += result['win_yen']
 
-                subtotal_bet += 100 * len(ninki_pattern)
-                total_bet += 100 * len(ninki_pattern)
+                for n in ninki_pattern:
+                    if n <= len(result['rank_list']):
+                        subtotal_bet += 100
+                        total_bet += 100
                 if ninki in ninki_pattern:
                     #print(rank, horse_no, horse_name, jocky, ninki)
                     total_total_win_yen_sum.append(result['win_yen'])

@@ -53,15 +53,21 @@ with open('race_result.json') as race_json_file:
 
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
 
                 if sort:
-                    stat_key = tuple(sorted((ninki1, ninki2, ninki3)))
+                    stat_key = tuple(sorted((ninki1, ninki2)))
                 else:
-                    stat_key = (ninki1, ninki2, ninki3)
+                    stat_key = (ninki1, ninki2)
                 if stat_key not in jun_stat:
-                    jun_stat[stat_key] = []
-                jun_stat[stat_key].append(result['tierce_yen'])
+                    jun_stat[stat_key] = {'umaren_yen': [], 'umatan_yen': [], 'wide_yen': []}
+                for horse_no, wide_yen in result['wide_yen_list'].items():
+                    break
+                jun_stat[stat_key]['umaren_yen'].append(result['umaren_yen'])
+                jun_stat[stat_key]['umatan_yen'].append(result['umatan_yen'])
+                jun_stat[stat_key]['wide_yen'].append(wide_yen)
 
 for jun, yen in sorted(jun_stat.items()):
-    print(f'{str(jun):11} {sum(yen):>11,}円 = {yen}')
+    umaren_yen = yen['umaren_yen']
+    umatan_yen = yen['umatan_yen']
+    wide_yen = yen['wide_yen']
+    print(f'{str(jun):8} {sum(umaren_yen):>7,}円 {sum(umatan_yen):>7,}円 {sum(wide_yen):>7,}円 = {umaren_yen}, {umatan_yen}, {wide_yen}')

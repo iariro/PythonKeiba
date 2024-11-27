@@ -1,3 +1,5 @@
+#!/opt/anaconda3/bin/python3
+
 import json
 import sys
 import keiba_lib
@@ -5,12 +7,15 @@ import keiba_lib
 display_place_rank = False
 ninki_pattern = [1]
 youbi = None
+location_filter = None
 race_filter = None
 for arg in sys.argv:
     if arg.startswith('-ninki='):
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
+    elif arg.startswith('-location='):
+        location_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-place_rank'):
@@ -26,6 +31,9 @@ with open('race_result.json') as race_json_file:
             continue
 
         for location in race_json[day]:
+            if location_filter is not None and location != location_filter:
+                continue
+
             subtotal_place_yen = []
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
@@ -56,7 +64,7 @@ with open('race_result.json') as race_json_file:
                 total_bet += 100 * len(ninki_pattern)
 
             yen_list = ','.join([f'{yen}' for yen in subtotal_place_yen])
-            print(f'{day} {location} {yen_list}={sum(subtotal_place_yen):,}円')
+            print(f"{day} {location} {' '.join([yen if yen != '0' else '_' for yen in yen_list.split(',')])}={sum(subtotal_place_yen):,}円")
             total_place_yen += sum(subtotal_place_yen)
 
 print()
