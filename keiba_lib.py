@@ -29,11 +29,15 @@ def get_race_list(html):
 
 def get_rank_list(html):
     soup = BeautifulSoup(html, "html.parser")
+    race_name = None
+    race_title = None
     h1 = soup.select('h1 span')
-    race_name = h1[0].text
+    if len(h1) > 0:
+        race_name = h1[0].text
 
     h2 = soup.select("div[class='race_title'] div div h2")
-    race_title = h2[0].text.strip()
+    if len(h2) > 0:
+        race_title = h2[0].text.strip()
     grade = ''
     grade_img = soup.select("div[class='race_title'] div div h2 span span span img")
     if len(grade_img) >= 1:
@@ -64,19 +68,25 @@ def get_rank_list(html):
             ninki_to_horse_no[ninki] = horse_no
         except:
             pass
-    win_yen = soup.select('li[class="win"] dl dd div div[class="yen"]')
-    win_yen = int(win_yen[0].contents[0].replace(',', ''))
+    win_yen = None
+    win_div = soup.select('li[class="win"] dl dd div div')
+    if len(win_div):
+        win_yen = {win_div[0].text: int(win_div[1].text.replace(',', '').replace('円', ''))}
 
     place_yen_list = {}
     place_div_list = soup.select("li[class='place'] dl dd div[class='line']")
     for place_div in place_div_list:
         place_yen_list[place_div.contents[1].text] = int(place_div.contents[3].text.replace(',' ,'').replace('円', ''))
 
-    umaren_yen = soup.select('li[class="umaren"] dl dd div div[class="yen"]')
-    umaren_yen = int(umaren_yen[0].contents[0].replace(',', ''))
+    umaren_yen = {}
+    umaren_div_list = soup.select('li[class="umaren"] dl dd div[class="line"]')
+    for umaren_div in umaren_div_list:
+        umaren_yen[umaren_div.contents[1].text] = int(umaren_div.contents[3].text.replace(',' ,'').replace('円', ''))
 
-    umatan_yen = soup.select('li[class="umatan"] dl dd div div[class="yen"]')
-    umatan_yen = int(umatan_yen[0].contents[0].replace(',', ''))
+    umatan_yen = {}
+    umatan_div_list = soup.select('li[class="umatan"] dl dd div[class="line"]')
+    for umatan_div in umatan_div_list:
+        umatan_yen[umatan_div.contents[1].text] = int(umatan_div.contents[3].text.replace(',' ,'').replace('円', ''))
 
     wide_yen_list = {}
     if 1 in ninki_to_horse_no and 2 in ninki_to_horse_no:
@@ -85,14 +95,19 @@ def get_rank_list(html):
         for wide_div in wide_div_list:
             if len(wide_div.contents) == 7:
                 wide_yen_list[wide_div.contents[1].text] = int(wide_div.contents[3].contents[0].replace(',', ''))
+    tierce_yen = {}
     tierce_div_list = soup.select('li[class="tierce"] dl dd div')
-    tierce_yen = int(tierce_div_list[0].contents[3].text.replace(',' ,'').replace('円' ,''))
-    tierce_ninki = tierce_div_list[0].contents[5].text
+    for tierce_div in tierce_div_list:
+        if len(tierce_div.contents) == 7:
+            tierce_yen[tierce_div.contents[1].text] = int(tierce_div.contents[3].text.replace(',' ,'').replace('円' ,''))
 
-    trio_yen = soup.select('li[class="trio"] dl dd div[class="yen"]')
-    trio_yen = int(trio_yen[0].text.replace(',' ,'').replace('円' ,''))
+    trio_div_list = soup.select('li[class="trio"] dl dd div[class="line"]')
+    trio_yen = {}
+    for trio_div in trio_div_list:
+        trio_div = [c.text for c in trio_div.children]
+        trio_yen[trio_div[1]] = int(trio_div[3].replace(',' ,'').replace('円' ,''))
 
-    return race_name, race_title, grade, rank_list, win_yen, place_yen_list, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen, tierce_ninki
+    return race_name, race_title, grade, rank_list, win_yen, place_yen_list, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen
 
 def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
     tierce_list = []

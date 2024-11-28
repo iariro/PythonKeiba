@@ -61,7 +61,8 @@ with open('race_result.json') as race_json_file:
                     stat_key = (ninki1, ninki2, ninki3)
                 if stat_key not in jun_stat:
                     jun_stat[stat_key] = []
-                jun_stat[stat_key].append(result['tierce_yen'])
+                for horse_no, yen in result['tierce_yen'].items():
+                    jun_stat[stat_key].append(yen)
 
 for jun, yen in sorted(jun_stat.items()):
     print(f'{str(jun):11} {sum(yen):>11,}円 = {yen}')

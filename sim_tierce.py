@@ -64,21 +64,22 @@ with open('race_result.json') as race_json_file:
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
                 (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
+                tierce_yen = result['tierce_yen'][f'{horse_no1}-{horse_no2}-{horse_no3}']
                 if ninki_pattern[0] == ninki1 and ninki_pattern[1] == ninki2 and ninki_pattern[2] == ninki3:
-                    total_tierce_yen.append(result['tierce_yen'])
-                    subtotal_tierce_yen.append(result['tierce_yen'])
+                    total_tierce_yen.append(tierce_yen)
+                    subtotal_tierce_yen.append(tierce_yen)
                 if nagashi:
                     nagashi_bet, atari_tierce, atari_trio = keiba_lib.nagashi_pattern(len(result['rank_list']), nagashi, (ninki1, ninki2, ninki3))
                     subtotal_nagashi_bet += nagashi_bet * 100
                     if atari_tierce:
                         #print(race_no, nagashi, (ninki1, ninki2, ninki3), result['tierce_yen'])
-                        total_nagashi_yen.append(result['tierce_yen'])
-                        subtotal_nagashi_yen.append(result['tierce_yen'])
+                        total_nagashi_yen.append(tierce_yen)
+                        subtotal_nagashi_yen.append(tierce_yen)
                     total_nagashi_bet.append(nagashi_bet * 100)
                 elif all(ninki <= box_width for ninki in (ninki1, ninki2, ninki3)):
                     if nagashi is None or ninki1 == nagashi:
-                        total_tiercebox_yen.append(result['tierce_yen'])
-                        subtotal_tiercebox_yen.append(result['tierce_yen'])
+                        total_tiercebox_yen.append(tierce_yen)
+                        subtotal_tiercebox_yen.append(tierce_yen)
 
                 subtotal_bet += 100
                 total_bet += 100

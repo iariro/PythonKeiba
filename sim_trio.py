@@ -58,15 +58,17 @@ with open('race_result.json') as race_json_file:
                 (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
                 ninki_list = (ninki1, ninki2, ninki3)
                 if ninki_pattern[0] in ninki_list and ninki_pattern[1] in ninki_list and ninki_pattern[2] in ninki_list:
-                    trio_yen_sum.append(result['trio_yen'])
-                    subtrio_yen_sum.append(result['trio_yen'])
+                    trio_yen = result['tierce_yen'][f'{horse_no1}-{horse_no2}-{horse_no3}']
+                    trio_yen_sum.append(trio_yen)
+                    subtrio_yen_sum.append(trio_yen)
                 if nagashi:
                     nagashi_bet, atari_tierce, atari_trio = keiba_lib.nagashi_pattern(len(result['rank_list']), nagashi, (ninki1, ninki2, ninki3))
                     subtotal_nagashi_bet += nagashi_bet * 100
                     if atari_trio:
+                        trio_yen = result['tierce_yen'][f'{horse_no1}-{horse_no2}-{horse_no3}']
                         #print(race_no, nagashi, (ninki1, ninki2, ninki3), result['trio_yen'])
-                        total_nagashi_yen.append(result['trio_yen'])
-                        subtotal_nagashi_yen.append(result['trio_yen'])
+                        total_nagashi_yen.append(trio_yen)
+                        subtotal_nagashi_yen.append(trio_yen)
                     total_nagashi_bet.append(nagashi_bet * 100)
                 subtotal_bet += 100
                 total_bet += 100

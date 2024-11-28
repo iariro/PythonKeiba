@@ -58,15 +58,17 @@ with open('race_result.json') as race_json_file:
                             continue
 
                 (rank, horse_no, horse_name, jocky, ninki) = result['rank_list'][0]
-                win_yen_sum.append(result['win_yen'])
                 if ninki in ninki_pattern:
-                    top_win_yen_sum.append(result['win_yen'])
-                    total_win_yen_sum += result['win_yen']
-                if max_win_yen < result['win_yen']:
-                    max_win_yen = result['win_yen']
+                    for horse_no, yen in result['win_yen'].items():
+                        top_win_yen_sum.append(yen)
+                        total_win_yen_sum += yen
+                        if max_win_yen < yen:
+                            max_win_yen = yen
                 top_ninki_list.append(ninki)
                 ninki_histo[ninki] += 1
-                jun_histo[ninki] += result['win_yen']
+                for horse_no, yen in result['win_yen'].items():
+                    win_yen_sum.append(yen)
+                    jun_histo[ninki] += yen
 
                 for n in ninki_pattern:
                     if n <= len(result['rank_list']):
@@ -74,7 +76,7 @@ with open('race_result.json') as race_json_file:
                         total_bet += 100
                 if ninki in ninki_pattern:
                     #print(rank, horse_no, horse_name, jocky, ninki)
-                    total_total_win_yen_sum.append(result['win_yen'])
+                    total_total_win_yen_sum.append(sum([yen for horse_no, yen in result['win_yen'].items()]))
                 tansho_rank.append({'day': day, 'location': location, 'race_no': race_no, 'horse_cnt': len(result['rank_list']), 'ninki': ninki, 'win_yen': result['win_yen']})
 
             print(f"{day} {location} 掛け金={subtotal_bet:5,}円 配当={total_win_yen_sum:6,}円 {sum(win_yen_sum):>7,}円 トップの人気：{' '.join([str(n) for n in top_ninki_list])}")

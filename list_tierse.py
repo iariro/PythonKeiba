@@ -33,4 +33,4 @@ with open('race_result.json') as race_json_file:
 
 #tierce_list = sorted(tierce_list, key=lambda race: race['tierce_yen'])
 for race in tierce_list:
-    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {','.join([str(n) for n in race['ninki']]):8} {race['tierce_yen']:>9,}円 {race['race_title']} {race['grade']}")
+    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {','.join([str(n) for n in race['ninki']]):8} {' '.join([str(yen) + '円' for hn, yen in race['tierce_yen'].items()])} {race['race_title']} {race['grade']}")
