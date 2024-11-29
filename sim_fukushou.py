@@ -24,6 +24,7 @@ for arg in sys.argv:
 total_bet = 0
 total_place_yen = 0
 place_rank = []
+hit_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
@@ -53,22 +54,28 @@ with open('race_result.json') as race_json_file:
 
                 ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
                 horseno_to_ninki = {str(r[1]): r[4] for r in result['rank_list']}
-                place_yen2 = 0
+                place_yen2 = []
                 for horse_no, place_yen in result['place_yen'].items():
                     for ninki in ninki_pattern:
                         if ninki in ninki_to_horseno:
                             if str(ninki_to_horseno[ninki]) == horse_no:
-                                place_yen2 = place_yen
-                    place_rank.append({'day': day, 'location': location, 'race_no': race_no, 'ninki': horseno_to_ninki[horse_no] if horse_no in horseno_to_ninki else '', 'place_yen': place_yen})
-                subtotal_place_yen.append(place_yen2)
+                                place_yen2.append(place_yen)
+                    place_rank.append({'day': day,
+                                       'location': location,
+                                       'race_no': race_no,
+                                       'ninki': horseno_to_ninki[horse_no] if horse_no in horseno_to_ninki else '',
+                                       'place_yen': place_yen})
+
+                subtotal_place_yen.append(sum(place_yen2))
                 total_bet += 100 * len(ninki_pattern)
+                hit_list.append(sum(place_yen2) > 0)
 
             yen_list = ','.join([f'{yen}' for yen in subtotal_place_yen])
             print(f"{day} {location} {' '.join([yen if yen != '0' else '_' for yen in yen_list.split(',')])}={sum(subtotal_place_yen):,}円")
             total_place_yen += sum(subtotal_place_yen)
 
 print()
-print(f'賭け金：{total_bet:,}円 配当：{total_place_yen:,}円')
+print(f'賭け金：{total_bet:,}円 配当：{total_place_yen:,}円 勝率：{len([hit for hit in hit_list if hit])*100/len(hit_list):.2f}%')
 
 if display_place_rank:
     place_rank = sorted(place_rank, key=lambda place: place['place_yen'])

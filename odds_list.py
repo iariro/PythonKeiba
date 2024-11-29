@@ -1,5 +1,6 @@
 #!/opt/anaconda3/bin/python3
 
+import datetime
 import sys
 import keiba_lib
 
@@ -15,6 +16,9 @@ date = url
 race_code = url[-2:]
 
 html = keiba_lib.get_html_web(url)
+
+print(datetime.datetime.now())
+print()
 
 filepath = f'{date}/{race_code}.html'
 race_list = keiba_lib.get_race_list(html)
