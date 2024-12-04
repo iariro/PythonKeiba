@@ -47,6 +47,8 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('horse_cnt_'):
                         if len(result['rank_list']) not in [int(n) for n in race_filter[10:].split(',')]:
                             continue
+                    elif race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
+                        continue
 
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
@@ -75,7 +77,7 @@ with open('race_result.json') as race_json_file:
             total_place_yen += sum(subtotal_place_yen)
 
 print()
-print(f'賭け金：{total_bet:,}円 配当：{total_place_yen:,}円 勝率：{len([hit for hit in hit_list if hit])*100/len(hit_list):.2f}%')
+print(f'賭け金：{total_bet:,}円 配当：{total_place_yen:,}円 勝率：{len([hit for hit in hit_list if hit])*100/len(hit_list) if len(hit_list)>1 else 0:.2f}%')
 
 if display_place_rank:
     place_rank = sorted(place_rank, key=lambda place: place['place_yen'])

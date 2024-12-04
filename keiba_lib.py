@@ -64,6 +64,9 @@ def get_rank_list(html):
             horse_name = ''.join(cell_list[7].text.split())
             jocky = cell_list[13].text
             ninki = int(cell_list[27].text)
+
+            jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '')
+
             rank_list.append((rank, horse_no, horse_name, jocky, ninki))
             ninki_to_horse_no[ninki] = horse_no
         except:
@@ -150,8 +153,10 @@ def get_odds_list(html):
 
     h2 = soup.select("div[class='race_title'] div div h2 span span")
 
-    print(h1[0].text, ' '.join([span.text for span in h2]))
-    print(date_line[0].contents[1].contents[3].text.strip())
+    race_title1 = h1[0].text
+    race_title2 = ' '.join([span.text for span in h2])
+    date = date_line[0].contents[1].contents[3].text.strip()
+
     rows = soup.find_all('tr')
     horse_list = []
     for i, row in enumerate(rows):
@@ -166,21 +171,21 @@ def get_odds_list(html):
                 m = re.match('([^0-9\.]*)([0-9\.]*)\(([0-9]*)番人気\)', lines[0])
                 if m:
                     horse['name'] = m.group(1)
-                    horse['odds'] = m.group(2)
+                    horse['odds'] = float(m.group(2))
                     horse['rank'] = int(m.group(3))
             elif j == 7:
                 if len(column.contents) >= 6:
-                    horse['rider'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '')
-        if 'rider' in horse and 'rank'in horse:
+                    horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
+        if 'jocky' in horse and 'rank' in horse:
             horse_list.append(horse)
 
-    horse_list = sorted(horse_list, key=lambda x: x['rank'])
+    #horse_list = sorted(horse_list, key=lambda x: x['rank'])
     for horse in horse_list:
         name_width = get_char_count(horse['name'], 20)
-        rider_width = get_char_count(horse['rider'], 15)
-        print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['rider']:{rider_width}s} {horse['odds']:>5} {horse['rank']:>2}")
+        jocky_width = get_char_count(horse['jocky'], 15)
+        print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
     print()
-    return h1[0].text, horse_list
+    return {'race_title1': race_title1, 'race_title2': race_title2, 'horse_list': horse_list}
 
 def get_start_end(pattern):
     if '-' in pattern:

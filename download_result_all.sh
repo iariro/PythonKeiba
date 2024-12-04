@@ -63,6 +63,13 @@ https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202405070120241123/03
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202406070120241123/12
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202405080120241124/33
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202406080120241124/42
+
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1006202405010120241130/9D
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1008202407010120241130/93
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1007202404010120241130/B6
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202405020120241201/5B
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202407020120241201/51
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202404020120241201/74
 EOF`
 do
   python3 download_result.py -url=$url

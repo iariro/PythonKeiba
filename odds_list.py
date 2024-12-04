@@ -1,75 +1,73 @@
 #!/opt/anaconda3/bin/python3
 
-import datetime
+import json
 import sys
 import keiba_lib
 
-url = None
-count_display = False
-for opt in sys.argv:
-    if opt.startswith('-url='):
-        url = opt[5:]
-    elif opt == '-count_display':
-        count_display = True
+ninki_list = [1]
+ninki_list2 = [1, 2]
+for arg in sys.argv:
+    if arg.startswith('-ninki='):
+        ninki_list = [int(n) for n in arg[arg.index('=')+1:].split(',')]
 
-date = url
-race_code = url[-2:]
+with open('odds.json') as odds_json_file, open('race_result.json') as race_json_file:
+    odds_json = json.load(odds_json_file)
+    race_json = json.load(race_json_file)
+    for day in odds_json:
+        for location in odds_json[day]:
+            print(day, location)
 
-html = keiba_lib.get_html_web(url)
+            win_yen_list = []
+            place_yen_list = []
+            umaren_yen_list = []
+            for race_no in odds_json[day][location]:
+                odds_list = sorted(odds_json[day][location][race_no], key=lambda x: x['odds'])
+                odds_list = [float(horse['odds']) for horse in odds_list]
 
-print(datetime.datetime.now())
-print()
+                target2 = False
+                target34 = False
+                high_odds = [odds for odds in odds_list if odds < 10]
+                if len(high_odds) <= 2:
+                    target2 = True
+                elif len(high_odds) <= 3:
+                    if min([odds for odds in high_odds]) < 2.5:
+                        if high_odds[1] >= 3:
+                            target34 = True
+                elif len(high_odds) <= 4:
+                    if min([odds for odds in high_odds]) < 2:
+                        if high_odds[1] >= 3:
+                            target34 = True
 
-filepath = f'{date}/{race_code}.html'
-race_list = keiba_lib.get_race_list(html)
-top_odds_list = []
-count_list = []
-horse_count = {}
-rider_count = {}
-odds_ratio_list = []
-for race in race_list:
-    html = keiba_lib.get_html_web(race, part=True)
+                horse_list = sorted(odds_json[day][location][race_no], key=lambda horse: horse['rank'])
+                if target2 or target34:
+                    for ninki in ninki_list:
+                        if horse_list[ninki - 1]['horse_no'] in race_json[day][location][race_no]['win_yen']:
+                            win_yen_list.append(race_json[day][location][race_no]['win_yen'][horse_list[ninki - 1]['horse_no']])
+                        else:
+                            win_yen_list.append(None)
 
-    date = race[-11:-3]
-    race_code = race[-2:]
+                        if horse_list[ninki - 1]['horse_no'] in race_json[day][location][race_no]['place_yen']:
+                            place_yen_list.append(race_json[day][location][race_no]['place_yen'][horse_list[ninki - 1]['horse_no']])
+                        else:
+                            place_yen_list.append(None)
 
-    filepath = f'{date}/{race_code}.html'
-    race_name, horse_list = keiba_lib.get_odds_list(html)
-    top_odds_list.append({'race_name': race_name, 'horse_list': horse_list[0]})
-    count_list.append({'race_name': race_name, 'horse_count': len(horse_list)})
-    odds123 = 0
-    odds456 = 0
-    for i, horse in enumerate(horse_list):
-        if horse['name'] not in horse_count:
-            horse_count[horse['name']] = 0
-        horse_count[horse['name']] += 1
-        if horse['rider'] not in rider_count:
-            rider_count[horse['rider']] = 0
-        rider_count[horse['rider']] += 1
-        if i in (0, 1, 2):
-            odds123 += float(horse['odds'])
-        if i in (3, 4, 5):
-            odds456 += float(horse['odds'])
-    odds_ratio_list.append((race_name, odds123, odds456))
+                if target2:
+                    (ninki1, ninki2) = ninki_list2
+                    horse_nos = sorted((int(n) for n in (horse_list[ninki1 - 1]['horse_no'], horse_list[ninki2 - 1]['horse_no'])))
+                    horse_nos = [str(n) for n in horse_nos]
+                    if '-'.join(horse_nos) in race_json[day][location][race_no]['umaren_yen']:
+                        umaren_yen_list.append(race_json[day][location][race_no]['umaren_yen']['-'.join(horse_nos)])
+                    else:
+                        umaren_yen_list.append(None)
 
-top_odds_list = sorted(top_odds_list, key=lambda horse: horse['horse_list']['odds'], reverse=True)
-count_list = sorted(count_list, key=lambda horse: horse['horse_count'])
-odds_ratio_list = sorted(odds_ratio_list, key=lambda race: race[1] / race[2])
-print('１番人気のオッズが高いレース')
-for i in range(5):
-    print(top_odds_list[i]['race_name'], top_odds_list[i]['horse_list']['odds'])
-print()
-print('頭数の少ないレース')
-for i in range(5):
-    print(count_list[i]['race_name'], count_list[i]['horse_count'])
-print()
-print('１−３番人気が際立ったレース')
-for i in range(5):
-    print(f'{odds_ratio_list[i][0]} {odds_ratio_list[i][1]:.2f} / {odds_ratio_list[i][2]:.2f} = {odds_ratio_list[i][1] / odds_ratio_list[i][2]:.2f}')
+                print('\t', day, location, race_no, target2, target34, [horse['odds'] for horse in horse_list[0:6]])
+                if False:
+                    for horse in horse_list:
+                        name_width = keiba_lib.get_char_count(horse['name'], 20)
+                        jocky_width = keiba_lib.get_char_count(horse['jocky'], 15)
+                        print(f"\t{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
+            print('\t単勝', win_yen_list)
+            print(f"\t複勝 賭け金={100*len(place_yen_list)}円 配当={place_yen_list}={sum(place_yen_list)}円")
 
-if count_display:
-    horse_count = sorted(horse_count.items(), key=lambda x:x[1], reverse=True)
-    print(horse_count)
-
-    rider_count = sorted(rider_count.items(), key=lambda x:x[1], reverse=True)
-    print(rider_count)
+            print('\t馬連', umaren_yen_list)
+            print()

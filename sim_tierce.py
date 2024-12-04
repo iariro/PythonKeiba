@@ -60,6 +60,8 @@ with open('race_result.json') as race_json_file:
                         continue
                     elif race_filter.startswith('horse_cnt_') and len(result['rank_list']) > int(race_filter[10:]):
                         continue
+                    elif race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
+                        continue
 
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]

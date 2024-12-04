@@ -19,7 +19,6 @@ with open('race_result.json') as race_json_file:
                 result = race_json[day][location][race_no]
 
                 for (rank, horse_no, horse_name, jocky, ninki) in result['rank_list']:
-                    jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '')
                     target = True
                     if jocky_filter is not None:
                         m = re.match(jocky_filter, jocky)
@@ -33,8 +32,9 @@ with open('race_result.json') as race_json_file:
 
 jocky_list2 = sorted(jocky_list.items(), key=lambda jocky: sum(jocky[1]) / len(jocky[1]))
 for jocky, rank in [(jocky, rank) for jocky, rank in jocky_list2 if len(jocky_list[jocky]) >= 20 or True][0:20]:
-    print(f"{jocky:{keiba_lib.get_char_count(jocky, 16)}s} {len(jocky_list[jocky]):>3}回 {sum(rank) / len(rank):.2f}")
+    print(f"{jocky:{keiba_lib.get_char_count(jocky, 16)}s} {len(jocky_list[jocky]):>3}回 平均{sum(rank) / len(rank):.2f}着")
 
 if jocky_filter is not None:
-    for i in range(1, 19):
-        print(f"{i:>2}着", '*' * len([n for n in jocky_list[jocky] if n == i]))
+    if jocky in jocky_list:
+        for i in range(1, 19):
+            print(f"{i:>2}着", '*' * len([n for n in jocky_list[jocky] if n == i]) if jocky in jocky_list else '-')
