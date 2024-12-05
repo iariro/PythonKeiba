@@ -1,13 +1,9 @@
-#!/opt/anaconda3/bin/python3
 
 import json
 import os
+import sys
 
-day = input('day:')
-location = input('location:')
-race_no_start = input('race_no_start:')
-for race_no in range(int(race_no_start), 13):
-    print(f"paste {race_no}R and type 'end'")
+def input_macos():
     n = 1
     race_list = []
     while True:
@@ -34,6 +30,42 @@ for race_no in range(int(race_no_start), 13):
         if fields1[2] != '取消':
             horse = {'horse_no': fields1[0], 'name': fields1[1], 'odds': float(fields1[2]), 'jocky': jocky}
         horse_list.append(horse)
+
+    return horse_list
+
+def input_windows():
+    n = 0
+    horse_list = []
+    while True:
+        line = input()
+        n += 1
+        if line == 'end':
+            break
+        if n == 1:
+             continue
+
+        fields1 = line.split()
+        if fields1[0].startswith('枠'):
+            fields1 = fields1[1:]
+        jocky = f"{fields1[7]} {fields1[8]}"
+        jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '')
+        if fields1[2] != '取消':
+            horse_list.append({'horse_no': fields1[0], 'name': fields1[1], 'odds': float(fields1[2]), 'jocky': jocky})
+
+    return horse_list
+
+if sys.argv[1] not in ('-macos', '-windows'):
+    sys.exit()
+
+day = input('day:')
+location = input('location:')
+race_no_start = input('race_no_start:')
+for race_no in range(int(race_no_start), 13):
+    print(f"paste {race_no}R and type 'end'")
+    if sys.argv[1] == '-macos':
+        horse_list = input_macos()
+    elif sys.argv[1] == '-windows':
+        horse_list = input_windows()
 
     horse_list = sorted(horse_list, key=lambda horse: horse['odds'])
     for i, horse in enumerate(horse_list):

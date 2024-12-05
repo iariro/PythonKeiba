@@ -1,4 +1,3 @@
-#!/opt/anaconda3/bin/python3
 
 import json
 import sys
@@ -60,14 +59,14 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     else:
                         umaren_yen_list.append(None)
 
-                print('\t', day, location, race_no, target2, target34, [horse['odds'] for horse in horse_list[0:6]])
+                print(f"    {race_no:>2}R {target2} {target34} {[horse['odds'] for horse in horse_list[0:6]]}")
                 if False:
                     for horse in horse_list:
                         name_width = keiba_lib.get_char_count(horse['name'], 20)
                         jocky_width = keiba_lib.get_char_count(horse['jocky'], 15)
                         print(f"\t{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
-            print('\t単勝', win_yen_list)
-            print(f"\t複勝 賭け金={100*len(place_yen_list)}円 配当={place_yen_list}={sum(place_yen_list)}円")
+            print('    単勝', win_yen_list)
+            print(f"    複勝 賭け金={100*len(place_yen_list)}円 配当={place_yen_list}={sum(place_yen_list)}円")
 
-            print('\t馬連', umaren_yen_list)
+            print('    馬連', umaren_yen_list)
             print()
