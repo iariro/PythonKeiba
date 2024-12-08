@@ -5,6 +5,7 @@ import sys
 import keiba_lib
 
 ninki_pattern = None
+day_filter = None
 youbi = None
 location_filter = None
 race_filter = None
@@ -13,6 +14,8 @@ nagashi = None
 for arg in sys.argv[1:]:
     if arg.startswith('-ninki='):
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
+    elif arg.startswith('-day='):
+        day_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-location='):
@@ -38,9 +41,10 @@ with open('race_result.json') as race_json_file:
     total_nagashi_yen = []
     total_bet = 0
     for day in race_json:
+        if day_filter is not None and day.startswith(day_filter) == False:
+            continue
         if youbi is not None and day[11] != youbi:
             continue
-
         for location in race_json[day]:
             if location_filter is not None and location != location_filter:
                 continue
@@ -70,6 +74,7 @@ with open('race_result.json') as race_json_file:
                 if ninki_pattern[0] == ninki1 and ninki_pattern[1] == ninki2 and ninki_pattern[2] == ninki3:
                     total_tierce_yen.append(tierce_yen)
                     subtotal_tierce_yen.append(tierce_yen)
+                    #print(day, location, race_no, tierce_yen)
                 if nagashi:
                     nagashi_bet, atari_tierce, atari_trio = keiba_lib.nagashi_pattern(len(result['rank_list']), nagashi, (ninki1, ninki2, ninki3))
                     subtotal_nagashi_bet += nagashi_bet * 100

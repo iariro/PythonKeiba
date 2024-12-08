@@ -180,11 +180,12 @@ def get_odds_list(html):
             horse_list.append(horse)
 
     #horse_list = sorted(horse_list, key=lambda x: x['rank'])
-    for horse in horse_list:
-        name_width = get_char_count(horse['name'], 20)
-        jocky_width = get_char_count(horse['jocky'], 15)
-        print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
-    print()
+    if False:
+        for horse in horse_list:
+            name_width = get_char_count(horse['name'], 20)
+            jocky_width = get_char_count(horse['jocky'], 15)
+            print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
+        print()
     return {'race_title1': race_title1, 'race_title2': race_title2, 'horse_list': horse_list}
 
 def get_start_end(pattern):
