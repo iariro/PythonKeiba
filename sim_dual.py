@@ -1,15 +1,19 @@
 #!/opt/anaconda3/bin/python3
 
 import json
+import re
 import sys
 import keiba_lib
 
 youbi = None
+day_filter = None
 race_filter = None
 ninki_pattern = None
 location_filter = None
 for arg in sys.argv:
-    if arg.startswith('-youbi='):
+    if arg.startswith('-day='):
+        day_filter = arg[arg.index('=')+1:]
+    elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
         race_filter = arg[arg.index('=')+1:]
@@ -28,6 +32,9 @@ total_wide = 0
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
+        if day_filter is not None and re.match(day_filter, day) is None:
+            continue
+
         if youbi is not None and day[11] != youbi:
             continue
 
@@ -51,6 +58,8 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('horse_cnt_'):
                         if len(result['rank_list']) > int(race_filter[10:]):
                             continue
+                    elif race_filter.startswith('title:') and len([title for title in race_filter[6:].split(',') if title in result['race_title']]) == 0:
+                        continue
 
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
                 (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
@@ -69,8 +78,11 @@ with open('race_result.json') as race_json_file:
                 ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
                 if ninki_pattern[0] in ninki_to_horseno and ninki_pattern[1] in ninki_to_horseno:
                     horse_no12 = '-'.join([str(n) for n in sorted((ninki_to_horseno[ninki_pattern[0]], ninki_to_horseno[ninki_pattern[1]]))])
-                    subtotal_wide.append(result['wide_yen_list'][horse_no12])
-                    total_wide += result['wide_yen_list'][horse_no12]
+                    if horse_no12 in result['wide_yen_list']:
+                        subtotal_wide.append(result['wide_yen_list'][horse_no12])
+                        total_wide += result['wide_yen_list'][horse_no12]
+                    else:
+                        pass#print(f"{day} {location} {race_no} {horse_no12} {result['wide_yen_list']}")
 
             print(f"{day} {location} {race_cnt*100:>6,}円 馬連：{subtotal_umaren}={sum(subtotal_umaren):,}円 馬単：{subtotal_umatan}={sum(subtotal_umatan):,}円 ワイド：{subtotal_wide}={sum(subtotal_wide):,}円")
 

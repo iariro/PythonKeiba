@@ -34,6 +34,7 @@ if ninki_pattern is None:
     ninki_pattern = [1, 2, 3]
 
 total_nagashi_bet = []
+total_box_bet = 0
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     total_tierce_yen = []
@@ -53,7 +54,9 @@ with open('race_result.json') as race_json_file:
             subtotal_tiercebox_yen = []
             subtotal_nagashi_yen = []
             subtotal_bet = 0
+            subtotal_box_bet = 0
             subtotal_nagashi_bet = 0
+            horse_cnt = []
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
 
@@ -91,17 +94,18 @@ with open('race_result.json') as race_json_file:
                 subtotal_bet += 100
                 total_bet += 100
                 if nagashi is not None:
-                    subtotal_box_bet = subtotal_bet * (box_width - 1) * (box_width - 2)
+                    subtotal_box_bet += subtotal_bet * (box_width - 1) * (box_width - 2)
                 else:
-                    subtotal_box_bet = subtotal_bet * box_width * (box_width - 1) * (box_width - 2)
+                    horse_cnt.append(len(result['rank_list']))
+                    box_width2 = box_width if box_width <= len(result['rank_list']) else len(result['rank_list'])
+                    subtotal_box_bet += 100 * box_width2 * (box_width2 - 1) * (box_width2 - 2)
+                total_box_bet += subtotal_box_bet
             print(f"{day} {location} {subtotal_bet:,}円→{subtotal_tierce_yen}={sum(subtotal_tierce_yen):,}円 {subtotal_box_bet:,}円→{subtotal_tiercebox_yen}={sum(subtotal_tiercebox_yen):,}円 {subtotal_nagashi_bet:,}円→{subtotal_nagashi_yen}={sum(subtotal_nagashi_yen):,}円")
 
 print()
 print(f"1-3番人気三連単    賭け金：{total_bet:,}円 配当金：{sum(total_tierce_yen):,}円")
 if nagashi is not None:
     total_box_bet = total_bet * (box_width - 1) * (box_width - 2)
-else:
-    total_box_bet = total_bet * box_width * (box_width - 1) * (box_width - 2)
 print(f"1-{box_width}番人気三連単box 賭け金：{total_box_bet:,}円 配当金：{sum(total_tiercebox_yen):,}円")
 if nagashi:
     print(f"{','.join(nagashi)}番人気三連単流し 賭け金：{sum(total_nagashi_bet):,}円 配当金：{sum(total_nagashi_yen):,}円")

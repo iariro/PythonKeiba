@@ -33,7 +33,7 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
             place_yen_list = []
             umaren_yen_list = []
             for race_no in odds_json[day][location]:
-                odds_list = sorted(odds_json[day][location][race_no], key=lambda x: x['odds'])
+                odds_list = sorted(odds_json[day][location][race_no]['horse_list'], key=lambda x: x['odds'])
                 odds_list = [float(horse['odds']) for horse in odds_list]
 
                 target2 = False
@@ -50,7 +50,7 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                         if high_odds[1] >= 3:
                             target34 = True
 
-                horse_list = sorted(odds_json[day][location][race_no], key=lambda horse: horse['rank'])
+                horse_list = sorted(odds_json[day][location][race_no]['horse_list'], key=lambda horse: horse['rank'])
                 if target2 or target34:
                     for ninki in ninki_list:
                         if day in race_json:
@@ -81,7 +81,7 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     odds_list2 += '  | ' + ' '.join([f"{horse['horse_no']:>2}:{horse['odds']:>5}" for horse in horse_list if horse['odds'] >= odds_thresh])
                 if target2 or target34:
                     odds_list2 += (' ' * 5) + ' '.join([f"{horse['jocky'].replace(' ', '')}" for horse in horse_list if horse['odds'] < odds_thresh])
-                print(f"    {race_no:>2}R {'o' if target2 or target34 else ' '} {odds_list2}")
+                print(f"    {race_no:>2}R {odds_json[day][location][race_no]['race_time']:>6} {'o' if target2 or target34 else ' '} {odds_list2}")
                 if False:
                     for horse in horse_list:
                         name_width = keiba_lib.get_char_count(horse['name'], 20)

@@ -53,4 +53,4 @@ if sort:
     trio_list = sorted(trio_list, key=lambda race: max([yen for horse_no, yen in race['trio_yen'].items()]))
 
 for race in trio_list:
-    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {','.join([str(n) for n in race['ninki']]):8} {','.join([str(n) for n in race['horse_no']]):8} {' '.join([f'{yen:,}円' for hn, yen in race['trio_yen'].items()]):>10} {race['race_title']} {race['grade']}")
+    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {','.join([str(n) for n in race['ninki']])+'番人気':8} {'-'.join([str(n) for n in race['horse_no']])+'番':8} {' '.join([f'{yen:,}円' for hn, yen in race['trio_yen'].items()]):>10} {race['race_title']} {race['grade']}")

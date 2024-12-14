@@ -66,7 +66,7 @@ with open('race_result.json') as race_json_file:
                 jun_stat[stat_key]['umatan_yen'].append(sum([yen for horse_no, yen in result['umatan_yen'].items()]))
                 jun_stat[stat_key]['wide_yen'].append(wide_yen)
 
-for jun, yen in sorted(jun_stat.items()):
+for jun, yen in sorted(jun_stat.items(), key=lambda yen: sum(yen[1]['umaren_yen'])):
     umaren_yen = yen['umaren_yen']
     umatan_yen = yen['umatan_yen']
     wide_yen = yen['wide_yen']

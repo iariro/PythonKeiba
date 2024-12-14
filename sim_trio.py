@@ -69,9 +69,11 @@ with open('race_result.json') as race_json_file:
                 ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
                 if ninki_pattern[0] in ninki_list and ninki_pattern[1] in ninki_list:
                     #print(day, location, race_no, result['wide_yen_list'], ninki1, ninki2)
-                    wide_yen = result['wide_yen_list']['-'.join([str(n) for n in sorted((ninki_to_horseno[ninki_pattern[0]], ninki_to_horseno[ninki_pattern[1]]))])]
-                    wide_yen_sum.append(wide_yen)
-                    subwide_yen_sum.append(wide_yen)
+                    wide_key = '-'.join([str(n) for n in sorted((ninki_to_horseno[ninki_pattern[0]], ninki_to_horseno[ninki_pattern[1]]))])
+                    if wide_key in result['wide_yen_list']:
+                        wide_yen = result['wide_yen_list'][wide_key]
+                        wide_yen_sum.append(wide_yen)
+                        subwide_yen_sum.append(wide_yen)
                 if nagashi:
                     nagashi_bet, atari_tierce, atari_trio = keiba_lib.nagashi_pattern(len(result['rank_list']), nagashi, (ninki1, ninki2, ninki3))
                     subtotal_nagashi_bet += nagashi_bet * 100

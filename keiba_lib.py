@@ -92,8 +92,7 @@ def get_rank_list(html):
         umatan_yen[umatan_div.contents[1].text] = int(umatan_div.contents[3].text.replace(',' ,'').replace('円', ''))
 
     wide_yen_list = {}
-    if 1 in ninki_to_horse_no and 2 in ninki_to_horse_no:
-        wide_horse_no_list = sorted((ninki_to_horse_no[1], ninki_to_horse_no[2]))
+    if True or 1 in ninki_to_horse_no and 2 in ninki_to_horse_no:
         wide_div_list = soup.select('li[class="wide"] dl dd div')
         for wide_div in wide_div_list:
             if len(wide_div.contents) == 7:
@@ -157,6 +156,9 @@ def get_odds_list(html):
     race_title2 = ' '.join([span.text for span in h2])
     date = date_line[0].contents[1].contents[3].text.strip()
 
+    race_header_div = soup.select("div[class='race_header'] div[class='left'] div[class='date_line'] div[class='inner'] div[class='cell time']")
+    race_time = race_header_div[0].text.strip()[5:]
+
     rows = soup.find_all('tr')
     horse_list = []
     for i, row in enumerate(rows):
@@ -186,7 +188,7 @@ def get_odds_list(html):
             jocky_width = get_char_count(horse['jocky'], 15)
             print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
         print()
-    return {'race_title1': race_title1, 'race_title2': race_title2, 'horse_list': horse_list}
+    return {'race_title1': race_title1, 'race_title2': race_title2, 'race_time': race_time, 'horse_list': horse_list}
 
 def get_start_end(pattern):
     if '-' in pattern:

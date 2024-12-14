@@ -1,16 +1,20 @@
 #!/opt/anaconda3/bin/python3
 
 import json
+import re
 import sys
 import keiba_lib
 
 display_place_rank = False
+day_filter = None
 ninki_pattern = [1]
 youbi = None
 location_filter = None
 race_filter = None
 for arg in sys.argv:
-    if arg.startswith('-ninki='):
+    if arg.startswith('-day='):
+        day_filter = arg[arg.index('=')+1:]
+    elif arg.startswith('-ninki='):
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
@@ -28,6 +32,9 @@ hit_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
+        if day_filter is not None and re.match(day_filter, day) is None:
+            continue
+
         if youbi is not None and day[11] != youbi:
             continue
 
@@ -47,7 +54,7 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('horse_cnt_'):
                         if len(result['rank_list']) not in [int(n) for n in race_filter[10:].split(',')]:
                             continue
-                    elif race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
+                    elif race_filter.startswith('title:') and len([title for title in race_filter[6:].split(',') if title in result['race_title']]) == 0:
                         continue
 
                 (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
@@ -73,7 +80,7 @@ with open('race_result.json') as race_json_file:
                 hit_list.append(sum(place_yen2) > 0)
 
             yen_list = ','.join([f'{yen}' for yen in subtotal_place_yen])
-            print(f"{day} {location} {' '.join([yen if yen != '0' else '_' for yen in yen_list.split(',')])}={sum(subtotal_place_yen):,}円")
+            print(f"{day} {location} {' '.join([yen if yen != '0' else '_' for yen in yen_list.split(',')])}={sum(subtotal_place_yen):,}円←{100*len(subtotal_place_yen)*len(ninki_pattern)}円")
             total_place_yen += sum(subtotal_place_yen)
 
 print()

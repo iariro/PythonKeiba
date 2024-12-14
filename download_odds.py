@@ -28,8 +28,9 @@ for race in race_list:
     odds_list = keiba_lib.get_odds_list(html)
     race_title1 = odds_list['race_title1']
     race_title2 = odds_list['race_title2']
+    race_time = odds_list['race_time']
     horse_list = odds_list['horse_list']
-    print(race_title1)
+    print(race_title1, race_time)
     m = re.match('(.*)年(.*)月(.*)日（(.)曜）.*回(..)[0-9]日 (.*)レース', race_title1)
     if m:
         date = f'{m.group(1)}/{int(m.group(2)):02}/{int(m.group(3)):02} {m.group(4)}'
@@ -40,7 +41,7 @@ for race in race_list:
             odds_json[date] = {}
         if location not in odds_json[date]:
             odds_json[date][location] = {}
-        odds_json[date][location][race_no] = horse_list
+        odds_json[date][location][race_no] = {'race_time': race_time, 'horse_list': horse_list}
 
 with open('odds.json', 'w') as odds_file:
     json.dump(odds_json, odds_file)
