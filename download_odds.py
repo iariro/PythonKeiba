@@ -41,7 +41,7 @@ for race in race_list:
             odds_json[date] = {}
         if location not in odds_json[date]:
             odds_json[date][location] = {}
-        odds_json[date][location][race_no] = {'race_time': race_time, 'horse_list': horse_list}
+        odds_json[date][location][race_no] = {'race_time': race_time, 'race_title': race_title2, 'horse_list': horse_list}
 
 with open('odds.json', 'w') as odds_file:
     json.dump(odds_json, odds_file)

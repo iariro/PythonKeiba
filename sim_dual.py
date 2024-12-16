@@ -10,6 +10,7 @@ day_filter = None
 race_filter = None
 ninki_pattern = None
 location_filter = None
+bet_type = None
 for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
@@ -21,6 +22,8 @@ for arg in sys.argv:
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-location='):
         location_filter = arg[arg.index('=')+1:]
+    elif arg.startswith('-type='):
+        bet_type = arg[arg.index('=')+1:]
 
 if ninki_pattern is None:
     ninki_pattern = [1, 2]
@@ -29,6 +32,8 @@ bet_yen = 0
 total_umaren = 0
 total_umatan = 0
 total_wide = 0
+total_umaren_bet = 0
+total_umatan_bet = 0
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
@@ -47,6 +52,8 @@ with open('race_result.json') as race_json_file:
             subtotal_wide = []
             race_cnt = 0
 
+            subtotal_umaren_bet = 0
+            subtotal_umatan_bet = 0
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
 
@@ -67,24 +74,40 @@ with open('race_result.json') as race_json_file:
 
                 race_cnt += 1
                 bet_yen += 100
-                if ninki_pattern[0] in (ninki1, ninki2) and ninki_pattern[1] in (ninki1, ninki2):
+                if ninki1 in ninki_pattern and ninki2 in ninki_pattern:
                     for horse_no, yen in result['umaren_yen'].items():
                         subtotal_umaren.append(yen)
                         total_umaren += yen
-                if ninki1 == ninki_pattern[0] and ninki2 == ninki_pattern[1]:
                     for horse_no, yen in result['umatan_yen'].items():
                         subtotal_umatan.append(yen)
                         total_umatan += yen
-                ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
-                if ninki_pattern[0] in ninki_to_horseno and ninki_pattern[1] in ninki_to_horseno:
-                    horse_no12 = '-'.join([str(n) for n in sorted((ninki_to_horseno[ninki_pattern[0]], ninki_to_horseno[ninki_pattern[1]]))])
-                    if horse_no12 in result['wide_yen_list']:
-                        subtotal_wide.append(result['wide_yen_list'][horse_no12])
-                        total_wide += result['wide_yen_list'][horse_no12]
-                    else:
-                        pass#print(f"{day} {location} {race_no} {horse_no12} {result['wide_yen_list']}")
+                else:
+                    subtotal_umaren.append(0)
+                    subtotal_umatan.append(0)
 
-            print(f"{day} {location} {race_cnt*100:>6,}円 馬連：{subtotal_umaren}={sum(subtotal_umaren):,}円 馬単：{subtotal_umatan}={sum(subtotal_umatan):,}円 ワイド：{subtotal_wide}={sum(subtotal_wide):,}円")
+                ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
+                for n1 in ninki_pattern:
+                    for n2 in ninki_pattern:
+                        if n1 >= n2:
+                            continue
+                        if n1 not in ninki_to_horseno or n2 not in ninki_to_horseno:
+                            continue
+                        horse_no12 = '-'.join([str(ninki_to_horseno[n]) for n in sorted((n1, n2))])
+                        if horse_no12 in result['wide_yen_list']:
+                            #print(f"{day} {location} {race_no}R {horse_no12} {result['wide_yen_list'][horse_no12]}")
+                            subtotal_wide.append(result['wide_yen_list'][horse_no12])
+                            total_wide += result['wide_yen_list'][horse_no12]
+                        else:
+                            pass#print(f"{day} {location} {race_no} {horse_no12} {result['wide_yen_list']}")
+                subtotal_umaren_bet += 100 * len(ninki_pattern) * (len(ninki_pattern) - 1) // 2
+                subtotal_umatan_bet += 100 * len(ninki_pattern) * (len(ninki_pattern) - 1)
+            total_umaren_bet += subtotal_umaren_bet
+            total_umatan_bet += subtotal_umatan_bet
+
+            if bet_type is None or bet_type == 'umaren':
+                print(f"{day} {location} 馬連：{subtotal_umaren_bet:,}円→{subtotal_umaren}={sum(subtotal_umaren):,}円 ワイド：{subtotal_wide}={sum(subtotal_wide):,}円")
+            if bet_type is None or bet_type == 'umatan':
+                print(f"{day} {location} 馬単：{subtotal_umatan_bet:,}円→{subtotal_umatan}={sum(subtotal_umatan):,}円")
 
 print()
-print(f'賭け金={bet_yen:,}円 馬連={total_umaren:,}円 馬単={total_umatan:,}円 ワイド={total_wide:,}円')
+print(f'馬連={total_umaren_bet:,}円→{total_umaren:,}円 ワイド={total_wide:,}円 馬単={total_umatan_bet:,}→{total_umatan:,}円')
