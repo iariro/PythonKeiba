@@ -63,11 +63,12 @@ def get_rank_list(html):
             horse_no = int(cell_list[5].text)
             horse_name = ''.join(cell_list[7].text.split())
             jocky = cell_list[13].text
+            weight = cell_list[23].text
             ninki = int(cell_list[27].text)
 
             jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '')
 
-            rank_list.append((rank, horse_no, horse_name, jocky, ninki))
+            rank_list.append((rank, horse_no, horse_name, jocky, weight, ninki))
             ninki_to_horse_no[ninki] = horse_no
         except:
             pass
@@ -167,14 +168,20 @@ def get_odds_list(html):
         horse = {}
         for j, column in enumerate(row.children):
             if j == 3:
-                horse['horse_no'] = column.text.split()[0]
+                t = column.text.split()
+                if len(t) > 0:
+                    horse['horse_no'] = t[0]
             elif j == 5:
                 lines = column.text.split()
-                m = re.match('([^0-9\.]*)([0-9\.]*)\(([0-9]*)番人気\)', lines[0])
-                if m:
-                    horse['name'] = m.group(1)
-                    horse['odds'] = float(m.group(2))
-                    horse['rank'] = int(m.group(3))
+                m1 = re.match('([^0-9\.]*)([0-9\.]*)\(([0-9]*)番人気\)', lines[0])
+                if m1:
+                    horse['name'] = m1.group(1)
+                    horse['odds'] = float(m1.group(2))
+                    horse['rank'] = int(m1.group(3))
+                if len(lines) >= 2:
+                    m2 = re.match('([0-9]*kg\([^\)]*\))', lines[1])
+                    if m2:
+                        horse['weight'] = m2.group(1)
             elif j == 7:
                 if len(column.contents) >= 6:
                     horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
@@ -224,7 +231,47 @@ def nagashi_pattern(n, pattern, ninki):
                                 atari_trio = True
     return cnt, atari_tierce, atari_trio
 
+def extract_race_name(race_name):
+    while True:
+        extract = False
+        m = re.match('第[0-9]*回(.*)', race_name)
+        if m:
+            race_name = m.group(1).strip()
+            extract = True
+        m = re.match('JRA(.*)', race_name)
+        if m:
+            race_name = m.group(1).strip()
+            extract = True
+        m = re.match('2024(.*)', race_name)
+        if m:
+            race_name = m.group(1).strip()
+            extract = True
+        if extract == False:
+            return race_name
+
+def make_exp_histo(yen_list, histo_class):
+    histo = {hc: 0 for hc in histo_class}
+    for yen in yen_list:
+        for hc in histo_class:
+            if yen < hc:
+                break
+            hc2 = hc
+        histo[hc2] += 1
+    return histo
+
+# 12 13 14 15 23 24 25 34 35 45
+def make_combination(s, n, d):
+    for i in range(s, n+1):
+        if d > 1:
+            for j in make_combination(i+1, n, d-1):
+                yield [i] + j
+        else:
+            yield [i]
+
 if __name__ == '__main__':
+    for i, n in enumerate(make_combination(1, 18, 5)):
+        print(i+1, n)
     print(nagashi_pattern(10, ('1','2-3','2-3'), (1,2,3)))
     print(nagashi_pattern(10, ('1','2-3','2-3'), (3,2,1)))
     print(nagashi_pattern(10, ('1','2-3','2-3'), (4,2,1)))
+    print(extract_race_name('第69回 第69回 有馬記念'))

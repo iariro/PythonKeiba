@@ -66,7 +66,7 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
                         continue
 
-                (rank, horse_no, horse_name, jocky, ninki) = result['rank_list'][0]
+                (rank, horse_no, horse_name, jocky, weight, ninki) = result['rank_list'][0]
                 #print(day, location, race_no, result['race_title'], rank, horse_no, horse_name, jocky, ninki)
                 if ninki in ninki_pattern:
                     for horse_no, yen in result['win_yen'].items():

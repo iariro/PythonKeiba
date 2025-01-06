@@ -79,11 +79,12 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     odds_list2 += '  | ' + ' '.join([f"{horse['horse_no']:>2}:{horse['odds']:>5}" for horse in horse_list if horse['odds'] >= odds_thresh][0:1])
                 else:
                     odds_list2 += '  | ' + ' '.join([f"{horse['horse_no']:>2}:{horse['odds']:>5}" for horse in horse_list if horse['odds'] >= odds_thresh])
-                if target2 or target34:
+                if True or target2 or target34:
                     odds_list2 += (' ' * 5) + ' '.join([f"{horse['jocky'].replace(' ', '')}" for horse in horse_list if horse['odds'] < odds_thresh])
                 race = odds_json[day][location][race_no]
-                race_title_width = keiba_lib.get_char_count(race['race_title'][0:3], 6)
-                print(f"    {race_no:>2}R {race['race_time']:>6} {race['race_title'][0:3]:{race_title_width}s} {'o' if target2 or target34 else ' '} {odds_list2}")
+                race_title = keiba_lib.extract_race_name(race['race_title'])
+                race_title_width = keiba_lib.get_char_count(race_title[0:3], 6)
+                print(f"    {race_no:>2}R {race['race_time']:>6} {race_title[0:3]:{race_title_width}s} {'o' if target2 or target34 else ' '} {odds_list2}")
                 if False:
                     for horse in horse_list:
                         name_width = keiba_lib.get_char_count(horse['name'], 20)

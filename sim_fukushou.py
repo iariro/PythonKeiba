@@ -57,9 +57,9 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('title:') and len([title for title in race_filter[6:].split(',') if title in result['race_title']]) == 0:
                         continue
 
-                (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
+                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
+                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
+                (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
 
                 ninki_to_horseno = {ninki1: horse_no1, ninki2: horse_no2, ninki3: horse_no3}
                 horseno_to_ninki = {str(r[1]): r[4] for r in result['rank_list']}

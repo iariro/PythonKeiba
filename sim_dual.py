@@ -11,7 +11,7 @@ race_filter = None
 ninki_pattern = None
 location_filter = None
 bet_type = None
-for arg in sys.argv:
+for arg in sys.argv[1:]:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-youbi='):
@@ -24,6 +24,8 @@ for arg in sys.argv:
         location_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-type='):
         bet_type = arg[arg.index('=')+1:]
+    else:
+        print('error', arg)
 
 if ninki_pattern is None:
     ninki_pattern = [1, 2]
@@ -34,6 +36,8 @@ total_umatan = 0
 total_wide = 0
 total_umaren_bet = 0
 total_umatan_bet = 0
+umaren_yen_list = []
+umatan_yen_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
@@ -62,24 +66,34 @@ with open('race_result.json') as race_json_file:
                         continue
                     elif race_filter == 'light' and len(race_no) >= 2:
                         continue
-                    elif race_filter.startswith('horse_cnt_'):
-                        if len(result['rank_list']) > int(race_filter[10:]):
+                    elif race_filter.startswith('min_horse_cnt:'):
+                        if len(result['rank_list']) < int(race_filter[14:]):
+                            continue
+                    elif race_filter.startswith('max_horse_cnt:'):
+                        if len(result['rank_list']) > int(race_filter[14:]):
                             continue
                     elif race_filter.startswith('title:') and len([title for title in race_filter[6:].split(',') if title in result['race_title']]) == 0:
                         continue
 
-                (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, ninki3) = result['rank_list'][2]
+                if len(result['rank_list']) < max(ninki_pattern):
+                    continue
+
+                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
+                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
+                (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
 
                 race_cnt += 1
                 bet_yen += 100
                 if ninki1 in ninki_pattern and ninki2 in ninki_pattern:
                     for horse_no, yen in result['umaren_yen'].items():
+                        print(f"{race_no} {ninki1}-{ninki2} {yen}")
                         subtotal_umaren.append(yen)
+                        umaren_yen_list.append(yen)
                         total_umaren += yen
                     for horse_no, yen in result['umatan_yen'].items():
+                        #print(f"{race_no} {ninki1}-{ninki2} {yen}")
                         subtotal_umatan.append(yen)
+                        umatan_yen_list.append(yen)
                         total_umatan += yen
                 else:
                     subtotal_umaren.append(0)
@@ -105,9 +119,34 @@ with open('race_result.json') as race_json_file:
             total_umatan_bet += subtotal_umatan_bet
 
             if bet_type is None or bet_type == 'umaren':
-                print(f"{day} {location} 馬連：{subtotal_umaren_bet:,}円→{subtotal_umaren}={sum(subtotal_umaren):,}円 ワイド：{subtotal_wide}={sum(subtotal_wide):,}円")
+                print(f"{day} {location} 馬連：{subtotal_umaren_bet:>6,}円→{subtotal_umaren}={sum(subtotal_umaren):,}円")
+            if bet_type is None or bet_type == 'wide':
+                print(f"{day} {location} ワイド：{subtotal_wide}円={sum(subtotal_wide):,}円")
             if bet_type is None or bet_type == 'umatan':
-                print(f"{day} {location} 馬単：{subtotal_umatan_bet:,}円→{subtotal_umatan}={sum(subtotal_umatan):,}円")
+                print(f"{day} {location} 馬単：{subtotal_umatan_bet:>6,}円→{subtotal_umatan}={sum(subtotal_umatan):,}円")
 
 print()
-print(f'馬連={total_umaren_bet:,}円→{total_umaren:,}円 ワイド={total_wide:,}円 馬単={total_umatan_bet:,}→{total_umatan:,}円')
+ratio_umaren = ''
+ratio_umatan = ''
+ratio_wide = ''
+if total_umaren_bet:
+    ratio_umaren = f'({total_umaren*100/total_umaren_bet:.2f}%)'
+if total_umaren_bet:
+    ratio_wide = f'({total_wide*100/total_umaren_bet:.2f}%)'
+if total_umatan_bet > 0:
+    ratio_umatan = f'({total_umatan*100/total_umatan_bet:.2f}%)'
+print(f'馬連={total_umaren_bet:,}円→{total_umaren:,}円{ratio_umaren} ワイド={total_wide:,}円{ratio_wide} 馬単={total_umatan_bet:,}→{total_umatan:,}円{ratio_umatan}')
+
+histo_class = [100 * i for i in range(1, 10)]
+histo_class += [1000 * i for i in range(1, 10)]
+histo_class += [10000 * i for i in range(1, 10)]
+histo_class += [100000 * i for i in range(1, 10)]
+histo_class += [1000000 * i for i in range(1, 10)]
+
+histo = keiba_lib.make_exp_histo(umaren_yen_list, histo_class)
+
+for hc, cnt in histo.items():
+    print(f"{hc:>9,} : {'*' * cnt}")
+    if hc > max(umaren_yen_list):
+        break
+print(len(umaren_yen_list))

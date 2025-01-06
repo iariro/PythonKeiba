@@ -32,8 +32,8 @@ with open('race_result.json') as race_json_file:
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
 
-                (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, ninki2) = result['rank_list'][1]
+                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
+                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
 
                 if ninki_pattern is None or (ninki_pattern[0] == ninki1 and ninki_pattern[1] == ninki2):
                     tierce_list.append({'day': day,
@@ -43,10 +43,11 @@ with open('race_result.json') as race_json_file:
                                         'grade': result['grade'],
                                         'horse_cnt': len(result['rank_list']),
                                         'ninki': (ninki1, ninki2),
+                                        'umaren_yen': result['umaren_yen'],
                                         'umatan_yen': result['umatan_yen']})
 
 if sort:
     tierce_list = sorted(tierce_list, key=lambda race: max([yen for horse_no, yen in race['umatan_yen'].items()]))
 
 for race in tierce_list:
-    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {','.join([str(n) for n in race['ninki']]):6} {' '.join([f'{yen:,}円' for hn, yen in race['umatan_yen'].items()]):>7} {race['race_title']} {race['grade']}")
+    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['horse_cnt']:>2}頭 {'-'.join([f'{n:>2}' for n in race['ninki']]):6} {' '.join([f'{yen:,}円' for hn, yen in race['umaren_yen'].items()]):>7} {race['race_title']} {race['grade']}")

@@ -25,7 +25,7 @@ for arg in sys.argv[1:]:
         print('err', arg)
         sys.exit()
 
-ninki_and_yen = []
+tierse_yen_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
@@ -51,20 +51,16 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('horse_cnt_') and len(result['rank_list']) > int(race_filter[10:]):
                         continue
 
-                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
-
-                
                 for horse_no, yen in result['tierce_yen'].items():
-                    ninki_and_yen.append((max(ninki1, ninki2, ninki3), yen))
+                    tierse_yen_list.append(yen)
 
-histo = {n: {'cnt': 0, 'yen': []} for n in range(1, 19)}
-for ninki, yen in ninki_and_yen:
-    histo[ninki]['cnt'] += 1
-    histo[ninki]['yen'].append(yen)
-total = 0
-for ninki, cnt in histo.items():
-    if len(cnt['yen']) > 0:
-        total += cnt['cnt']
-        print(f"{ninki:>2} : {total*100/len(ninki_and_yen):>5.1f}% {min(cnt['yen']):>9,}-{max(cnt['yen']):>9,} ", '*' * cnt['cnt'])
+histo_class = [100 * i for i in range(1, 10)]
+histo_class += [1000 * i for i in range(1, 10)]
+histo_class += [10000 * i for i in range(1, 10)]
+histo_class += [100000 * i for i in range(1, 10)]
+histo_class += [1000000 * i for i in range(1, 10)]
+
+histo = keiba_lib.make_exp_histo(tierse_yen_list, histo_class)
+
+for hc, cnt in histo.items():
+    print(f"{hc:>9,} : {'*' * cnt}")

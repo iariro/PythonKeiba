@@ -70,6 +70,20 @@ https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1007202404010120241130/B6
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202405020120241201/5B
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202407020120241201/51
 https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202404020120241201/74
+
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202405030120241207/3C
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202407030120241207/32
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202404030120241207/55
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1006202405040120241208/4B
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1008202407040120241208/41
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde1007202404040120241208/64
+
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202405050120241214/45
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202407050120241214/3B
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202404050120241214/5E
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202405060120241215/75
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202407060120241215/6B
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202404060120241215/8E
 EOF`
 do
   python3 download_result.py -url=$url

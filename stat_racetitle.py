@@ -13,7 +13,7 @@ with open('race_result.json') as race_json_file:
             variance_list = []
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
-                ninki_to_horse_no = {ninki: horse_no for (rank, horse_no, horse_name, jocky, ninki) in result['rank_list']}
+                ninki_to_horse_no = {ninki: horse_no for (rank, horse_no, horse_name, jocky, weight, ninki) in result['rank_list']}
                 for i in range(1, len(result['rank_list']) + 1):
                     if i in ninki_to_horse_no:
                         variance_list.append((i - ninki_to_horse_no[i]) ** 2)

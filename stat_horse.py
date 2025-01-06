@@ -41,7 +41,7 @@ with open('race_result.json') as race_json_file:
                         if len(result['rank_list']) > int(race_filter[10:]):
                             continue
 
-                for i, (rank, horse_no, horse_name, jocky, ninki) in enumerate(result['rank_list']):
+                for i, (rank, horse_no, horse_name, jocky, weight, ninki) in enumerate(result['rank_list']):
                     if i == 0:
                         jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '')
                         if horse_name not in horse_list:
@@ -54,7 +54,8 @@ with open('race_result.json') as race_json_file:
 horse_list = sorted(horse_list.items(), key=lambda horse: sum([cnt for loc, cnt in horse[1].items()]), reverse=True)
 jocky_list = sorted(jocky_list.items(), key=lambda jocky: sum([cnt for loc, cnt in jocky[1].items()]), reverse=True)
 
-#print(horse_list)
 print(' ' * 15, ' '.join(location_list))
+for horse, cnt in horse_list[0:20]:
+    print(f"{horse:{keiba_lib.get_char_count(horse, 18)}s} {'   '.join([f'{yen:>2}' for loc, yen in cnt.items()])}")
 for jocky, cnt in jocky_list[0:20]:
     print(f"{jocky:{keiba_lib.get_char_count(jocky, 16)}s} {'   '.join([f'{yen:>2}' for loc, yen in cnt.items()])}")

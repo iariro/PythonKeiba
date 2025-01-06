@@ -32,7 +32,7 @@ with open('race_result.json') as race_json_file:
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
 
-                (rank1, horse_no1, horse_name1, jocky1, ninki1) = result['rank_list'][0]
+                (rank1, horse_no1, horse_name1, jocky1, wight1, ninki1) = result['rank_list'][0]
 
                 if ninki_pattern is None or (ninki_pattern[0] == ninki1):
                     win_list.append({'day': day,
