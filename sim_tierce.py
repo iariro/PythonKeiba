@@ -90,6 +90,9 @@ with open('race_result.json') as race_json_file:
                     if nagashi is None or ninki1 == nagashi:
                         total_tiercebox_yen.append(tierce_yen)
                         subtotal_tiercebox_yen.append(tierce_yen)
+                else:
+                    total_tiercebox_yen.append(0)
+                    subtotal_tiercebox_yen.append(0)
 
                 subtotal_bet += 100
                 total_bet += 100

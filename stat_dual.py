@@ -7,15 +7,16 @@ import keiba_lib
 
 day_filter = None
 youbi = None
-sort = False
+sort = 'umaren_yen'
 location_filter = None
 race_filter = None
 width = 4
+exclude_big = True
 for arg in sys.argv[1:]:
     if arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
-    elif arg.startswith('-sort'):
-        sort = True
+    elif arg.startswith('-sort='):
+        sort = arg[arg.index('=')+1:]
     elif arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-location='):
@@ -24,13 +25,15 @@ for arg in sys.argv[1:]:
         race_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-width='):
         width = int(arg[arg.index('=')+1:])
+    elif arg.startswith('-exclude_big='):
+        exclude_big = True if arg[arg.index('=')+1:] == 'True' else False
     else:
         print('err', arg)
         sys.exit()
 
 jun_stat = {}
 for n in keiba_lib.make_combination(1, 18, width):
-    jun_stat[tuple(n)] = {'umaren_yen': [], 'umatan_yen': [], 'wide_yen': []}
+    jun_stat[tuple(n)] = {'umaren_yen': [], 'umaren_cnt': 0, 'umatan_yen': [], 'umatan_cnt': 0, 'wide_yen': [], 'wide_cnt': 0}
 cnt = 0
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
@@ -54,7 +57,7 @@ with open('race_result.json') as race_json_file:
                         continue
                     elif race_filter == 'light' and len(race_no) >= 2:
                         continue
-                    elif race_filter.startswith('horse_cnt_') and len(result['rank_list']) > int(race_filter[10:]):
+                    elif race_filter.startswith('horse_cnt:') and len(result['rank_list']) < int(race_filter[10:]):
                         continue
 
                 (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
@@ -63,13 +66,19 @@ with open('race_result.json') as race_json_file:
                 cnt += 1
                 for k, v in jun_stat.items():
                     if ninki1 in k and ninki2 in k:
-                        v['umaren_yen'].append(sum([yen for horse_no, yen in result['umaren_yen'].items()]))
-                        v['umatan_yen'].append(sum([yen for horse_no, yen in result['umatan_yen'].items()]))
-                        v['wide_yen'].append(sum([yen for horse_no, yen in result['wide_yen_list'].items()]))
+                        v['umaren_yen'].append(sum([yen for horse_no, yen in result['umaren_yen'].items() if exclude_big == False or yen < 100000]))
+                        v['umatan_yen'].append(sum([yen for horse_no, yen in result['umatan_yen'].items() if exclude_big == False or yen < 100000]))
+                        v['wide_yen'].append(sum([yen for horse_no, yen in result['wide_yen_list'].items() if exclude_big == False or yen < 100000]))
+                        v['umaren_cnt'] += 1
+                        v['umatan_cnt'] += 1
+                        v['wide_cnt'] += 1
 
-for jun, yen in sorted(jun_stat.items(), key=lambda yen: sum(yen[1]['umaren_yen'])):
+for jun, yen in sorted(jun_stat.items(), key=lambda yen: yen[1][sort] if 'cnt' in sort else sum(yen[1][sort])):
     umaren_yen = yen['umaren_yen']
     umatan_yen = yen['umatan_yen']
     wide_yen = yen['wide_yen']
-    print(f"{'-'.join([f'{j:>2}' for j in jun])} {sum(umaren_yen):>7,}円 {sum(umatan_yen):>7,}円 {sum(wide_yen):>7,}円")
+    umaren_cnt = yen['umaren_cnt']
+    umatan_cnt = yen['umatan_cnt']
+    wide_cnt = yen['wide_cnt']
+    print(f"{'-'.join([f'{j:>2}' for j in jun])} {umaren_cnt:>3}:{sum(umaren_yen):>7,}円 {umatan_cnt}:{sum(umatan_yen):>7,}円 {wide_cnt}:{sum(wide_yen):>7,}円")
 print(cnt)

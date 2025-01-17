@@ -54,7 +54,6 @@ with open('race_result.json') as race_json_file:
             subtotal_umaren = []
             subtotal_umatan = []
             subtotal_wide = []
-            race_cnt = 0
 
             subtotal_umaren_bet = 0
             subtotal_umatan_bet = 0
@@ -82,11 +81,10 @@ with open('race_result.json') as race_json_file:
                 (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
                 (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
 
-                race_cnt += 1
                 bet_yen += 100
                 if ninki1 in ninki_pattern and ninki2 in ninki_pattern:
                     for horse_no, yen in result['umaren_yen'].items():
-                        print(f"{race_no} {ninki1}-{ninki2} {yen}")
+                        #print(f"{day} {location} {race_no} {ninki1}-{ninki2} {yen}")
                         subtotal_umaren.append(yen)
                         umaren_yen_list.append(yen)
                         total_umaren += yen
@@ -137,8 +135,8 @@ if total_umatan_bet > 0:
     ratio_umatan = f'({total_umatan*100/total_umatan_bet:.2f}%)'
 print(f'馬連={total_umaren_bet:,}円→{total_umaren:,}円{ratio_umaren} ワイド={total_wide:,}円{ratio_wide} 馬単={total_umatan_bet:,}→{total_umatan:,}円{ratio_umatan}')
 
-histo_class = [100 * i for i in range(1, 10)]
-histo_class += [1000 * i for i in range(1, 10)]
+histo_class = [100 * i for i in range(1, 30)]
+histo_class += [1000 * i for i in range(3, 10)]
 histo_class += [10000 * i for i in range(1, 10)]
 histo_class += [100000 * i for i in range(1, 10)]
 histo_class += [1000000 * i for i in range(1, 10)]

@@ -29,7 +29,6 @@ for arg in sys.argv:
 print('１番人気だけ買い続けた場合')
 
 tansho_rank = []
-jun_histo = {jun: 0 for jun in range(1, 19)}
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     total_bet = 0
@@ -78,7 +77,6 @@ with open('race_result.json') as race_json_file:
                 ninki_histo[ninki] += 1
                 for horse_no, yen in result['win_yen'].items():
                     win_yen_sum.append(yen)
-                    jun_histo[ninki] += yen
 
                 for n in ninki_pattern:
                     if n <= len(result['rank_list']):
@@ -102,6 +100,3 @@ if display_tansho_rank:
     tansho_rank = sorted(tansho_rank, key=lambda tansho: tansho['win_yen'])
     for tansho in tansho_rank:
         print(f"{tansho['day']} {tansho['location']} {tansho['race_no']:>2}R {tansho['horse_cnt']:>2}頭 {tansho['ninki']:>2}番人気 {tansho['win_yen']:>6,}円")
-
-for jun, yen in jun_histo.items():
-    print(f'{jun:>2}番人気 {yen:>6,}円', '*' * (yen // 1000))
