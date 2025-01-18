@@ -31,10 +31,14 @@ with open('odds.json') as odds_json_file:
 
             for race_no in odds_json[day][location]:
                 horse_list = []
-                race_time = odds_json[day][location][race_no]['race_time']
+                race_time = '--時--分'
+                if 'race_time' in odds_json[day][location][race_no]:
+                    race_time = odds_json[day][location][race_no]['race_time']
                 if len(race_time) == 5:
                     race_time = '0' + race_time
-                race_title = odds_json[day][location][race_no]['race_title']
+                race_title = '-'
+                if 'race_title' in odds_json[day][location][race_no]:
+                    race_title = odds_json[day][location][race_no]['race_title']
                 race_title = keiba_lib.extract_race_name(race_title)
                 if 'horse_list' in odds_json[day][location][race_no]:
                     odds_list = sorted(odds_json[day][location][race_no]['horse_list'], key=lambda x: x['odds'])

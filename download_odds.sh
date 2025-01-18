@@ -28,10 +28,12 @@
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501040120250112/96
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501050120250113/7C
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501050120250113/C6
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501060120250118/A0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501060120250118/EA
 
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501060120250118/A0
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501060120250118/EA
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501070120250119/D0
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501070120250119/1A
 EOF`
 do
   ./download_odds.py -url=$url
