@@ -18,13 +18,15 @@ for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
 
-age_stat = {}
+age_stat = {'2024': {}, '2025': {}}
 all_age = set()
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
+    sum_age = {'牡': 0, '牝': 0, 'せん': 0}
     for day in race_json:
         if day_filter is not None and re.match(day_filter, day) is None:
             continue
+        year = day[0:4]
 
         for location in race_json[day]:
             print(day, location)
@@ -34,14 +36,25 @@ with open('race_result.json') as race_json_file:
                 for (rank, horse_no, horse_name, age, jocky, weight, ninki) in keiba_lib.get_rank_record2(result['rank_list']):
                     if age == '-':
                         continue
-                    if rank not in age_stat:
-                        age_stat[rank] = {}
-                    if age not in age_stat[rank]:
-                        age_stat[rank][age] = 0
-                    age_stat[rank][age] += 1
+                    if rank not in age_stat[year]:
+                        age_stat[year][rank] = {}
+                    if age not in age_stat[year][rank]:
+                        age_stat[year][rank][age] = 0
+                    age_stat[year][rank][age] += 1
                     all_age.add(age)
+
+                    if age.startswith('せん'):
+                        sum_age['せん'] += 1
+                    elif age.startswith('牝'):
+                        sum_age['牝'] += 1
+                    elif age.startswith('牡'):
+                        sum_age['牡'] += 1
 
 all_age = sorted(all_age, key=age_sort)
 print('  ', ' '.join([f"{age:>{keiba_lib.get_char_count(age, 5)}s}" for age in all_age]))
-for rank, cnt in age_stat.items():
-    print(f"{rank:>2}", ' '.join([f'{cnt[age]:5}' if age in cnt else ' ' * 5 for age in all_age]))
+for year in age_stat:
+    for rank, cnt in age_stat[year].items():
+        print(f"{rank:>2}", ' '.join([f'{cnt[age]:5}' if age in cnt else ' ' * 5 for age in all_age]))
+    print()
+for s, cnt in sum_age.items():
+    print(s, cnt)
