@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import re
 import sys
+import keiba_lib
 
 location_filter = None
 for arg in sys.argv:
@@ -23,7 +24,7 @@ with open('race_result.json') as race_json_file:
                 continue
 
             for race_no, result in race_json[day][location].items():
-                for (rank, horse_no, horse_name, jocky, weight, ninki) in result['rank_list']:
+                for (rank, horse_no, horse_name, age, jocky, weight, ninki) in keiba_lib.get_rank_record2(result['rank_list']):
                     m = re.match('([0-9]*)\((.*)\)', weight)
                     rank_weight[rank].append(int(m.group(1)))
                     weight_list.append(int(m.group(1)))

@@ -41,7 +41,7 @@ with open('race_result.json') as race_json_file:
                         if len(result['rank_list']) > int(race_filter[10:]):
                             continue
 
-                for i, (rank, horse_no, horse_name, jocky, weight, ninki) in enumerate(result['rank_list']):
+                for i, (rank, horse_no, horse_name, age, jocky, weight, ninki) in enumerate(keiba_lib.get_rank_record(result['rank_list'])):
                     if i == 0:
                         jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '')
                         if horse_name not in horse_list:

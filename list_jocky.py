@@ -10,6 +10,8 @@ jocky = '武 豊'
 for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
     elif arg.startswith('-jocky='):
         jocky = arg[arg.index('=')+1:]
 
@@ -41,7 +43,8 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     if jocky in horse['jocky']:
                         rank = '-'
                         if result:
-                            for (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) in result['rank_list']:
+                            for record in result['rank_list']:
+                                (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(record)
                                 if horse_no2 == int(horse['horse_no']):
                                     rank = rank2
                         name_width = keiba_lib.get_char_count(horse['name'], 18)

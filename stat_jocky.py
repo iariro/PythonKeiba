@@ -30,7 +30,8 @@ with open('race_result.json') as race_json_file:
             for race_no in race_json[day][location]:
                 result = race_json[day][location][race_no]
 
-                for (rank, horse_no, horse_name, jocky, weight, ninki) in result['rank_list']:
+                for record in result['rank_list']:
+                    (rank, horse_no, horse_name, age, jocky, weight, ninki) in keiba_lib.get_rank_record(record)
                     target = True
                     if jocky_filter is not None:
                         m = re.match(jocky_filter, jocky)

@@ -38,8 +38,8 @@ with open('race_result.json') as race_json_file:
                 if horse_num and len(result['rank_list']) != horse_num:
                     continue
 
-                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
+                (rank1, horse_no1, horse_name1, age1, jocky1, weight1, ninki1) = keiba_lib.get_rank_record(result['rank_list'][0])
+                (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(result['rank_list'][1])
 
                 if ninki_pattern is None or (ninki_pattern[0] == ninki1 and ninki_pattern[1] == ninki2):
                     tierce_list.append({'day': day,

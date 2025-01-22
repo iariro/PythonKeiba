@@ -52,7 +52,7 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('horse_cnt_') and len(result['rank_list']) > int(race_filter[10:]):
                         continue
 
-                for (rank, horse_no, name, jocky, weight, ninki) in result['rank_list']:
+                for (rank, horse_no, name, age, jocky, weight, ninki) in keiba_lib.get_rank_record(result['rank_list']):
                     if str(horse_no) in result['win_yen']:
                         win_yen_list[ninki].append(result['win_yen'][str(horse_no)])
                 cnt += 1

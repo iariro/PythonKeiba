@@ -37,7 +37,7 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     odds_list = sorted(odds_json[day][location][race_no], key=lambda x: x['odds'])
 
                 if day in race_json:
-                    for rank, horse_no, name, jocky, wegit, ninki in race_json[day][location][race_no]['rank_list']:
+                    for rank, horse_no, name, age, jocky, wegit, ninki in keiba_lib.get_rank_record2(race_json[day][location][race_no]['rank_list']):
                         if horse_no == int(odds_list[0]['horse_no']):
                             odds_and_rank[odds_list[0]['odds']*10].append(rank)
 

@@ -37,7 +37,7 @@ with open('race_result.json') as race_json_file:
                     if race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
                         continue
                 variance = 0
-                for (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) in result['rank_list']:
+                for (rank1, horse_no1, horse_name1, age1, jocky1, weight1, ninki1) in keiba_lib.get_rank_record2(result['rank_list']):
                     variance += (rank1 - ninki1) ** 2
                     total_variance += (rank1 - ninki1) ** 2
                 #print(race_no, result['race_name'], result['grade'] if result['grade'] else '', variance)

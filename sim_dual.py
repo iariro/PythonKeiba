@@ -73,13 +73,15 @@ with open('race_result.json') as race_json_file:
                             continue
                     elif race_filter.startswith('title:') and len([title for title in race_filter[6:].split(',') if title in result['race_title']]) == 0:
                         continue
+                    elif race_filter.startswith('race_no:') and race_no not in race_filter[8:].split(','):
+                        continue
 
                 if len(result['rank_list']) < max(ninki_pattern):
                     continue
 
-                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
+                (rank1, horse_no1, horse_name1, age1, jocky1, weight1, ninki1) = keiba_lib.get_rank_record(result['rank_list'][0])
+                (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(result['rank_list'][1])
+                (rank3, horse_no3, horse_name3, age3, jocky3, weight3, ninki3) = keiba_lib.get_rank_record(result['rank_list'][2])
 
                 bet_yen += 100
                 if ninki1 in ninki_pattern and ninki2 in ninki_pattern:

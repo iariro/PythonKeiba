@@ -62,13 +62,14 @@ def get_rank_list(html):
             rank = int(cell_list[1].text)
             horse_no = int(cell_list[5].text)
             horse_name = ''.join(cell_list[7].text.split())
+            age = cell_list[9].text
             jocky = cell_list[13].text
             weight = cell_list[23].text
             ninki = int(cell_list[27].text)
 
             jocky = jocky.replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '')
 
-            rank_list.append((rank, horse_no, horse_name, jocky, weight, ninki))
+            rank_list.append((rank, horse_no, horse_name, age, jocky, weight, ninki))
             ninki_to_horse_no[ninki] = horse_no
         except:
             pass
@@ -111,6 +112,19 @@ def get_rank_list(html):
         trio_yen[trio_div[1]] = int(trio_div[3].replace(',' ,'').replace('円' ,''))
 
     return race_name, race_title, grade, rank_list, win_yen, place_yen_list, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen
+
+def get_rank_record(record):
+    if len(record) == 7:
+        return record
+    elif len(record) == 6:
+        (rank, horse_no, horse_name, jocky, weight, ninki) = record
+        return (rank, horse_no, horse_name, '-', jocky, weight, ninki)
+
+def get_rank_record2(record_list):
+    if len(record_list[0]) == 7:
+        return record_list
+    else:
+        return [(rank, horse_no, horse_name, '-', jocky, weight, ninki) for (rank, horse_no, horse_name, jocky, weight, ninki) in record_list]
 
 def analyze_tierce(all_race_result, thresh_horse_count=None, tansho_target=None, tierce12_nagashi=None):
     tierce_list = []
@@ -184,6 +198,7 @@ def get_odds_list(html):
                         horse['weight'] = m2.group(1)
             elif j == 7:
                 if len(column.contents) >= 6:
+                    horse['age'] = column.contents[1].text
                     horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
         if 'jocky' in horse and 'rank' in horse:
             horse_list.append(horse)

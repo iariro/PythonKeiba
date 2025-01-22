@@ -57,9 +57,9 @@ with open('race_result.json') as race_json_file:
                     elif race_filter.startswith('title:') and race_filter[6:] not in result['race_title']:
                         continue
 
-                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
-                (rank3, horse_no3, horse_name3, jocky3, weight3, ninki3) = result['rank_list'][2]
+                (rank1, horse_no1, horse_name1, age1, jocky1, weight1, ninki1) = keiba_lib.get_rank_record(result['rank_list'][0])
+                (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(result['rank_list'][1])
+                (rank3, horse_no3, horse_name3, age3, jocky3, weight3, ninki3) = keiba_lib.get_rank_record(result['rank_list'][2])
                 ninki_list = (ninki1, ninki2, ninki3)
                 if ninki_pattern[0] in ninki_list and ninki_pattern[1] in ninki_list and ninki_pattern[2] in ninki_list:
                     #print(day, location, race_no, result['trio_yen'])

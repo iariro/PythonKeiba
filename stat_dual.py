@@ -57,11 +57,11 @@ with open('race_result.json') as race_json_file:
                         continue
                     elif race_filter == 'light' and len(race_no) >= 2:
                         continue
-                    elif race_filter.startswith('horse_cnt:') and len(result['rank_list']) < int(race_filter[10:]):
+                    elif race_filter.startswith('horse_cnt:') and len(result['rank_list']) != int(race_filter[10:]):
                         continue
 
-                (rank1, horse_no1, horse_name1, jocky1, weight1, ninki1) = result['rank_list'][0]
-                (rank2, horse_no2, horse_name2, jocky2, weight2, ninki2) = result['rank_list'][1]
+                (rank1, horse_no1, horse_name1, age1, jocky1, weight1, ninki1) = keiba_lib.get_rank_record(result['rank_list'][0])
+                (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(result['rank_list'][1])
 
                 cnt += 1
                 for k, v in jun_stat.items():
@@ -80,5 +80,6 @@ for jun, yen in sorted(jun_stat.items(), key=lambda yen: yen[1][sort] if 'cnt' i
     umaren_cnt = yen['umaren_cnt']
     umatan_cnt = yen['umatan_cnt']
     wide_cnt = yen['wide_cnt']
-    print(f"{'-'.join([f'{j:>2}' for j in jun])} {umaren_cnt:>3}:{sum(umaren_yen):>7,}円 {umatan_cnt}:{sum(umatan_yen):>7,}円 {wide_cnt}:{sum(wide_yen):>7,}円")
-print(cnt)
+    print(f"{'-'.join([f'{j:>2}' for j in jun])} {umaren_cnt:>3}:{sum(umaren_yen):>7,}円 {umatan_cnt:>3}:{sum(umatan_yen):>9,}円 {wide_cnt:>3}:{sum(wide_yen):>9,}円")
+print(f"{len(jun_stat)}パターン")
+print(f"レース数 {cnt}")

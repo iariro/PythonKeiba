@@ -1,3 +1,4 @@
+# 配当がどうやって決定されるかを推定
 
 import datetime
 import json
@@ -9,6 +10,8 @@ day_filter = None
 for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
 
 all_list = []
 with open('odds.json') as odds_json_file, open('race_result.json') as race_json_file:
@@ -35,24 +38,27 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                         if race_no in race_json[day][location]:
                             result = race_json[day][location][race_no]
 
+                horse_no_odds = {}
                 for horse in odds_list:
+                    horse_no_odds[horse['horse_no']] = horse['odds']
                     if result:
                         for record in result['rank_list']:
                             (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(record)
                             if horse_no2 == int(horse['horse_no']):
                                 rank = rank2
+                for no, yen in result['umaren_yen'].items():
+                    no1, no2 = no.split('-')
+                    ratio = yen / (horse_no_odds[no1] * (horse_no_odds[no2]))
                     all_list.append({'day': day,
                                      'location': location,
                                      'race_no': race_no,
-                                     'odds_rank': horse['rank'],
-                                     'rank': rank,
-                                     'horse_num': len(odds_list),
-                                     'horse_no': horse['horse_no'],
-                                     'odds': horse['odds'],
-                                     'name': horse['name'],
-                                     'jocky': horse['jocky']})
-
-for horse in sorted(all_list, key=lambda horse: horse['odds']):
-    name_width = keiba_lib.get_char_count(horse['name'], 18)
-    jocky_width = keiba_lib.get_char_count(horse['jocky'], 12)
-    print(f"{horse['day']} {horse['location']} {horse['race_no']:>2}R {horse['horse_no']:>2} {horse['odds']:>5}倍 {horse['horse_num']:>2}頭中{horse['odds_rank']:>2}番人気→{horse['rank']:>2}着 {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s}")
+                                     'no': no,
+                                     'horse_cnt': len(result['rank_list']),
+                                     'umaren_yen': yen,
+                                     'odds1': horse_no_odds[no1],
+                                     'odds2': horse_no_odds[no2]})
+for race in sorted(all_list, key=lambda race: race['odds1']):
+    if False and race['odds1'] != 12:
+        continue
+    ratio = race['umaren_yen'] / (race['odds1'] * race['odds2'] * race['horse_cnt'])
+    print(f"{race['day']} {race['location']} {race['race_no']:>2}R {race['no']:5} {race['horse_cnt']:>2}頭 {race['umaren_yen']:7,} {race['odds1']:5} {race['odds2']:5} {ratio}")
