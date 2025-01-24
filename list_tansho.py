@@ -1,4 +1,3 @@
-#!/opt/anaconda3/bin/python3
 
 import json
 import sys

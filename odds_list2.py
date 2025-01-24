@@ -13,6 +13,8 @@ ninki_list2 = [1, 2]
 for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
     elif arg.startswith('-red_only'):
         red_only = True
     elif arg.startswith('-odds_thresh='):

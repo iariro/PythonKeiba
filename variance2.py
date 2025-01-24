@@ -1,19 +1,27 @@
-#!/opt/anaconda3/bin/python3
 
+import datetime
 import json
+import re
 import sys
 import keiba_lib
 
 location_filter = None
+day_filter = None
 for arg in sys.argv:
     if arg.startswith('-location='):
         location_filter = arg[arg.index('=')+1:]
+    elif arg.startswith('-day='):
+        day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
 
 title_list = {}
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
         if day[11] == '月':
+            continue
+        if day_filter is not None and re.match(day_filter, day) is None:
             continue
 
         for location in race_json[day]:

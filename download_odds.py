@@ -1,4 +1,3 @@
-#!/opt/anaconda3/bin/python3
 
 import json
 import os
@@ -7,9 +6,12 @@ import sys
 import keiba_lib
 
 url = None
+race_no_filter = None
 for opt in sys.argv:
     if opt.startswith('-url='):
         url = opt[5:]
+    elif opt.startswith('-race_no='):
+        race_no_filter = opt[9:]
 
 if os.path.exists('odds.json'):
     with open('odds.json') as odds_file:
@@ -20,7 +22,10 @@ else:
 html = keiba_lib.get_html_web(url)
 
 race_list = keiba_lib.get_race_list(html)
-for race in race_list:
+for i, race in enumerate(race_list):
+    if race_no_filter is not None and i + 1 != int(race_no_filter):
+        continue
+
     html = keiba_lib.get_html_web(race, part=True)
 
     race_code = race[-2:]
