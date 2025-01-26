@@ -1,4 +1,5 @@
 
+import datetime
 import json
 import re
 import sys
@@ -13,6 +14,8 @@ bet_type = None
 for arg in sys.argv[1:]:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
     elif arg.startswith('-youbi='):
         youbi = arg[arg.index('=')+1:]
     elif arg.startswith('-race_filter='):
@@ -144,8 +147,9 @@ histo_class += [1000000 * i for i in range(1, 10)]
 
 histo = keiba_lib.make_exp_histo(umaren_yen_list, histo_class)
 
-for hc, cnt in histo.items():
-    print(f"{hc:>9,} : {'*' * cnt}")
-    if hc > max(umaren_yen_list):
-        break
+if len(umaren_yen_list) > 0:
+    for hc, cnt in histo.items():
+        print(f"{hc:>9,} : {'*' * cnt}")
+        if hc > max(umaren_yen_list):
+            break
 print(len(umaren_yen_list))

@@ -32,14 +32,17 @@
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501060120250118/EA
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501070120250119/D0
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501070120250119/1A
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501080120250125/A9
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501080120250125/F3
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501010120250125/F1
 
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501080120250125/A9
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501080120250125/F3
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501010120250125/F1
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501090120250126/D9
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501090120250126/23
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501020120250126/21
 EOF`
 do
-  ./download_odds.py -url=$url $*
+  python3 download_odds.py -url=$url $*
 done
 
 date

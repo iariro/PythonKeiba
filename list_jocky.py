@@ -32,6 +32,8 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                     odds_list = sorted(odds_json[day][location][race_no]['horse_list'], key=lambda x: x['odds'])
                 else:
                     odds_list = sorted(odds_json[day][location][race_no], key=lambda x: x['odds'])
+                race_title = odds_json[day][location][race_no]['race_title']
+                race_time = odds_json[day][location][race_no]['race_time']
 
                 result = None
                 if day in race_json:
@@ -49,4 +51,6 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                                     rank = rank2
                         name_width = keiba_lib.get_char_count(horse['name'], 18)
                         jocky_width = keiba_lib.get_char_count(horse['jocky'], 12)
-                        print(f"{day} {location} {race_no:>2}R {horse['rank']:>2}番人気 {horse['horse_no']:>2} {horse['odds']:>5} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {rank:>2}着 {horse['weight'] if 'weight' in horse else '-'}")
+                        race_title = race_title[0:7]
+                        title_width = keiba_lib.get_char_count(race_title, 14)
+                        print(f"{day} {location} {race_no:>2}R {race_time:>6} {len(odds_list):>2}頭 {race_title:{title_width}s} {horse['rank']:>2}番人気 {horse['horse_no']:>2} {horse['odds']:>5} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {rank:>2}着 {horse['weight'] if 'weight' in horse else '-'}")

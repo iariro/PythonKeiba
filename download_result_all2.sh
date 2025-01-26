@@ -29,8 +29,14 @@
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501060120250118/A6
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501070120250119/8C
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501070120250119/D6
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501080120250125/65
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501080120250125/AF
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501010120250125/AD
 START_TIME=$(date)
 for url in `cat << EOF
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501021220250126/E4
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501091220250126/E6
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501091220250126/9C
 EOF`
 do
   python3 download_result.py -url=$url

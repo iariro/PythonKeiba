@@ -1,5 +1,7 @@
 
+import datetime
 import json
+import re
 import sys
 import keiba_lib
 
@@ -11,6 +13,8 @@ location_filter = None
 for arg in sys.argv[1:]:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
+        if len(day_filter) == 5:
+            day_filter = f'{datetime.datetime.today().year}/{day_filter}'
     elif arg.startswith('-ninki='):
         ninki_pattern = [int(n) for n in arg[arg.index('=')+1:].split(',')]
     elif arg.startswith('-horse_num='):
@@ -24,7 +28,7 @@ tierce_list = []
 with open('race_result.json') as race_json_file:
     race_json = json.load(race_json_file)
     for day in race_json:
-        if day_filter is not None and day.startswith(day_filter) == False:
+        if day_filter is not None and re.match(day_filter, day) is None:
             continue
 
         for location in race_json[day]:
