@@ -2,6 +2,7 @@ import re
 import unicodedata
 import urllib.request
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 def get_html_web(url, part=False):
     if part:
@@ -200,6 +201,13 @@ def get_odds_list(html):
                 if len(column.contents) >= 6:
                     horse['age'] = column.contents[1].text
                     horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
+            elif j in (8, 10, 12, 14):
+                if isinstance(column, Tag) and len(column.contents) > 0:
+                    past_no = f'past{1 + (j - 8) // 2}'
+                    if len(column.contents[1].text.strip().split()) == 2:
+                        past_date, past_location = column.contents[1].text.strip().split()
+                        rank1, rank2 = column.contents[5].text.strip().split()
+                        horse[past_no] = {'date': past_date, 'location': past_location, 'title': column.contents[3].text.strip(), 'rank1': rank1, 'rank2': rank2}
         if 'jocky' in horse and 'rank' in horse:
             horse_list.append(horse)
 
