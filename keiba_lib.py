@@ -187,6 +187,11 @@ def get_odds_list(html):
                 if len(t) > 0:
                     horse['horse_no'] = t[0]
             elif j == 5:
+                if len(column.contents) >= 2:
+                    for c in column.contents[1].contents[1]:
+                        if c.name == 'span':
+                            if c.contents[0].name == 'img':
+                                horse['icon'] = c.contents[0]['src'].split('/')[-1].split('.')[0].replace('maru-', '')
                 lines = column.text.split()
                 m1 = re.match('([^0-9\.]*)([0-9\.]*)\(([0-9]*)番人気\)', lines[0])
                 if m1:
@@ -207,7 +212,32 @@ def get_odds_list(html):
                     if len(column.contents[1].text.strip().split()) == 2:
                         past_date, past_location = column.contents[1].text.strip().split()
                         rank1, rank2 = column.contents[5].text.strip().split()
-                        horse[past_no] = {'date': past_date, 'location': past_location, 'title': column.contents[3].text.strip(), 'rank1': rank1, 'rank2': rank2}
+                        jocky, jocky_weight = column.contents[7].text.strip().split('\n')
+                        course_etc = column.contents[9].text.strip().split('\n')
+
+                        course = None
+                        time = None
+                        round_condition = None
+                        weight = None
+                        if len(course_etc) == 5:
+                            course, x, x, x, round_condition = course_etc
+                        elif len(course_etc) == 8:
+                            course, time, x, x, round_condition, x, x, weight = course_etc
+                        elif len(course_etc) == 9:
+                            course, time, x, x, round_condition, x, x, x, weight = course_etc
+                        else:
+                            print( course_etc)
+                        horse[past_no] = {'date': past_date,
+                                          'location': past_location,
+                                          'title': column.contents[3].text.strip(),
+                                          'rank1': rank1,
+                                          'rank2': rank2,
+                                          'jocky': jocky,
+                                          'jocky_weight': jocky_weight,
+                                          'course': course,
+                                          'time': time,
+                                          'round_condition': round_condition,
+                                          'weight': weight}
         if 'jocky' in horse and 'rank' in horse:
             horse_list.append(horse)
 
@@ -290,6 +320,14 @@ def make_combination(s, n, d):
                 yield [i] + j
         else:
             yield [i]
+
+def time_to_second(time):
+    m = re.match('([0-9]*):([0-9]*\.[0-9]*)', time)
+    if m:
+        return int(m.group(1)) * 60 + float(m.group(2))
+    m = re.match('([0-9]*\.[0-9]*)', time)
+    if m:
+        return float(m.group(1))
 
 if __name__ == '__main__':
     for i, n in enumerate(make_combination(1, 18, 5)):

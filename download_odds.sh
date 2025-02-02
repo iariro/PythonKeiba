@@ -35,11 +35,17 @@
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501080120250125/A9
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501080120250125/F3
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501010120250125/F1
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501090120250126/D9
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501090120250126/23
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501020120250126/21
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501010120250201/0D
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501010120250201/EB
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501030120250201/AA
 
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202501090120250126/D9
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202501090120250126/23
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501020120250126/21
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501040120250202/DA
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501020120250202/1B
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501020120250202/3D
 EOF`
 do
   python3 download_odds.py -url=$url $*

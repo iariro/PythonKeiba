@@ -32,11 +32,17 @@
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501080120250125/65
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501080120250125/AF
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501010120250125/AD
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501021220250126/E4
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501091220250126/E6
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501091220250126/9C
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202501011220250201/D0
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202501011220250201/AE
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501031220250201/6D
 START_TIME=$(date)
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501021220250126/E4
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0107202501091220250126/E6
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0106202501091220250126/9C
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202501020120250202/F9
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202501020120250202/D7
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0110202501040120250202/96
 EOF`
 do
   python3 download_result.py -url=$url
