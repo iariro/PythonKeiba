@@ -65,9 +65,9 @@ with open('race_result.json') as race_json_file:
                 cnt += 1
                 for k, v in jun_stat.items():
                     if ninki1 in k and ninki2 in k:
-                        v['umaren_yen'].append(sum([yen for horse_no, yen in result['umaren_yen'].items() if exclude_big == False or yen < 100000]))
-                        v['umatan_yen'].append(sum([yen for horse_no, yen in result['umatan_yen'].items() if exclude_big == False or yen < 100000]))
-                        v['wide_yen'].append(sum([yen for horse_no, yen in result['wide_yen_list'].items() if exclude_big == False or yen < 100000]))
+                        v['umaren_yen'].append(sum([yen for horse_no, yen in result['umaren_yen'].items() if exclude_big == False or yen < 50000]))
+                        v['umatan_yen'].append(sum([yen for horse_no, yen in result['umatan_yen'].items() if exclude_big == False or yen < 50000]))
+                        v['wide_yen'].append(sum([yen for horse_no, yen in result['wide_yen_list'].items() if exclude_big == False or yen < 50000]))
                         v['umaren_cnt'] += 1
                         v['umatan_cnt'] += 1
                         v['wide_cnt'] += 1
