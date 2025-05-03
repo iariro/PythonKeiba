@@ -41,14 +41,85 @@
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501010120250201/0D
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501010120250201/EB
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501030120250201/AA
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501040120250202/DA
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501020120250202/1B
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501020120250202/3D
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501030120250208/1E
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501050120250208/BB
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501040120250209/2C
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501041120250209/A0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501060120250209/EB
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501030120250210/6E
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde1005202501050120250215/06
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde1008202501050120250215/E4
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde1010202501070120250215/A3
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501060120250216/57
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501060120250216/35
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501080120250216/F4
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501070120250222/30
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501070120250222/0E
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501090120250222/CD
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501080120250223/60
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501080120250223/3E
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501100120250223/8F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502010120250301/03
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501010120250301/B0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501110120250301/4F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502020120250302/33
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501020120250302/E0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501120120250302/7F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502030120250308/14
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501030120250308/C1
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502040120250309/44
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501040120250309/F1
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502050120250315/1D
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501050120250315/CA
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202502010120250315/9B
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502070120250322/26
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501070120250322/D3
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202502030120250322/A4
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202502080120250323/56
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202501080120250323/03
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202502040120250323/D4
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503010120250329/D0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502010120250329/7D
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202502050120250329/B5
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503020120250330/F8
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502020120250330/A5
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0107202502060120250330/DD
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503030120250405/89
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502030120250405/36
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503040120250406/B9
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502040120250406/66
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503050120250412/92
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502050120250412/3F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501010120250412/86
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503060120250413/C2
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502060120250413/6F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501020120250413/B6
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503070120250419/A3
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502070120250419/50
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501030120250419/97
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0106202503080120250420/CB
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0109202502080120250420/78
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501040120250420/BF
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502010120250426/99
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502010120250426/77
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501050120250426/A0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502020120250427/C9
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502020120250427/A7
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0103202501060120250427/D0
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502030120250503/0F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502030120250503/ED
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501010120250503/AE
 
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0110202501040120250202/DA
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202501020120250202/1B
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202501020120250202/3D
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502040120250504/3F
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502040120250504/1D
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501020120250504/DE
 EOF`
 do
   python3 download_odds.py -url=$url $*
 done
 
-date
+date "+%T"

@@ -47,10 +47,10 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                         if result:
                             for record in result['rank_list']:
                                 (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(record)
-                                if horse_no2 == int(horse['horse_no']):
+                                if horse['horse_no'] != '除外' and horse_no2 == int(horse['horse_no']):
                                     rank = rank2
                         name_width = keiba_lib.get_char_count(horse['name'], 18)
                         jocky_width = keiba_lib.get_char_count(horse['jocky'], 12)
                         race_title = race_title[0:7]
                         title_width = keiba_lib.get_char_count(race_title, 14)
-                        print(f"{day} {location} {race_no:>2}R {race_time:>6} {len(odds_list):>2}頭 {race_title:{title_width}s} {horse['rank']:>2}番人気 {horse['horse_no']:>2} {horse['odds']:>5} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {rank:>2}着 {horse['weight'] if 'weight' in horse else '-'}")
+                        print(f"{day} {location} {race_no:>2}R {race_time:>6} {len(odds_list):>2}頭 {race_title:{title_width}s} {horse['rank']:>2}番人気 {horse['horse_no'] if 'horse_no' in horse else '-':>2} {horse['odds']:>5} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {rank:>2}着 {horse['weight'] if 'weight' in horse else '-'}")

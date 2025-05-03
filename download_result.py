@@ -29,7 +29,7 @@ race_list = keiba_lib.get_race_list(html)
 for race_url in race_list:
     html = keiba_lib.get_html_web(race_url, part=True)
     (race_name, race_title, grade, rank_list, win_yen, place_yen_list, umaren_yen, umatan_yen, wide_yen_list, trio_yen, tierce_yen) = keiba_lib.get_rank_list(html)
-    m = re.match('レース結果(.*)年(.*)月(.*)日（(.)曜）.回(.*)[0-9]日 (.*)レース', race_name)
+    m = re.match('レース結果(.*)年(.*)月(.*)日（(.)曜）.回([^0-9]*)[0-9]+日 (.*)レース', race_name)
     if m:
         location = m.group(5)
         if False:

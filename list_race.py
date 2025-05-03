@@ -46,7 +46,18 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
         if 'race_time' in odds_json[day][location][race_no]:
             time = odds_json[day][location][race_no]['race_time']
 
-        print(f"{day} {location} {race_no}R {time} {odds_json[day][location][race_no]['race_title']}")
+        race_title = '-'
+        if 'race_title' in odds_json[day][location][race_no]:
+            race_title = odds_json[day][location][race_no]['race_title']
+
+        grade = ''
+        if 'grade' in odds_json[day][location][race_no]:
+            grade = odds_json[day][location][race_no]['grade']
+
+        race_header = f"{day} {location} {race_no}R {time} {race_title}"
+        if grade:
+            race_header += ' ' + grade
+        print(race_header)
 
         result = None
         if day in race_json:
@@ -56,11 +67,11 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
 
         total_list = []
         rank = 0
-        for horse in odds_list:
+        for j, horse in enumerate(odds_list):
             if result:
                 for record in result['rank_list']:
                     (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(record)
-                    if horse_no2 == int(horse['horse_no']):
+                    if horse['horse_no'] not in ('除外', '取消') and horse_no2 == int(horse['horse_no']):
                         rank = rank2
             past_race = []
             past_time = []
@@ -73,13 +84,13 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                             meter = int(m.group(1))
                         if len(horse[f'past{i}']['time']) > 1:
                             past_time.append(keiba_lib.time_to_second(horse[f'past{i}']['time']) * 1000 / meter)
-            total_list.append({'horse_no': horse['horse_no'],
+            total_list.append({'horse_no': horse['horse_no'] if 'horse_no' in horse else j+1,
                                'icon': horse['icon'] if 'icon' in horse else None,
                                'name': horse['name'],
                                'odds': horse['odds'],
                                'ninki': horse['rank'],
                                'weight': horse['weight'] if 'weight' in horse else '-',
-                               'age': horse['age'],
+                               'age': horse['age'].replace('\n', '') if 'age' in horse else '-',
                                'jocky': horse['jocky'],
                                'past_race': past_race,
                                'past_time': past_time,
@@ -97,6 +108,8 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
             total_list = sorted(total_list, key=lambda horse: min(horse['past_race']) if len(horse['past_race']) > 0 else 18)
         elif sort_order == 'rank':
             total_list = sorted(total_list, key=lambda horse: horse['rank'])
+        elif sort_order == 'odds':
+            total_list = sorted(total_list, key=lambda horse: horse['odds'])
 
         past_race_cnt = 0
         for horse in total_list:
@@ -127,3 +140,24 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
                 elif past_rank[0] - horse['ninki'] >= 6:
                     gap = '-'
             print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['odds']:>5} {horse['ninki']:>2}番人気 {horse['weight']:{weight_width}s} {horse['age']:{age_width}s} {horse['jocky']:{jocky_width}s} {past_race:12} {past_rank[1]:>5.2f} {past_rank[0]:>3}位 {past_min:>2} {past_time:5.2f}秒 {horse['rank']:>2}着 {' '.join((t for t in (icon, gap) if t))}")
+
+        yen_line = []
+        if result:
+            for item, yen in result.items():
+                if item.endswith('yen'):
+                    kake_type = None
+                    if item == 'win_yen':
+                        kake_type = '単勝'
+                    elif item == 'place_yen':
+                        kake_type = '複勝'
+                    elif item == 'umaren_yen':
+                        kake_type = '馬連'
+                    elif item == 'umatan_yen':
+                        kake_type = '馬単'
+                    elif item == 'trio_yen':
+                        kake_type = '三連複'
+                    elif item == 'tierce_yen':
+                        kake_type = '三連単'
+                    yen_line.append(f"{kake_type}:{' '.join([f'{yen:,}円' for horse_no, yen in result[item].items()])}")
+            print('／'.join(yen_line))
+

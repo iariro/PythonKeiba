@@ -166,10 +166,16 @@ def get_odds_list(html):
     h1 = soup.select("h1 span span[class='txt'] span[class='opt']")
     date_line = soup.select("div[class='date_line']")
 
-    h2 = soup.select("div[class='race_title'] div div h2 span span")
+    h2 = soup.select("div[class='race_title'] div div h2 span")
 
     race_title1 = h1[0].text
-    race_title2 = ' '.join([span.text for span in h2])
+    race_title2_list = [c for c in h2[0].children]
+    grade = None
+    if len(race_title2_list) == 4:
+        race_title2_list2 = [c for c in race_title2_list[2].children]
+        race_title2_list3 = [c for c in race_title2_list2[1].children]
+        grade = race_title2_list3[0]['alt']
+    race_title2 = [span.text for span in h2][0].strip()
     date = date_line[0].contents[1].contents[3].text.strip()
 
     race_header_div = soup.select("div[class='race_header'] div[class='left'] div[class='date_line'] div[class='inner'] div[class='cell time']")
@@ -187,7 +193,7 @@ def get_odds_list(html):
                 if len(t) > 0:
                     horse['horse_no'] = t[0]
             elif j == 5:
-                if len(column.contents) >= 2:
+                if len(column.contents) >= 2 and len(column.contents[1].contents) >= 2:
                     for c in column.contents[1].contents[1]:
                         if c.name == 'span':
                             if c.contents[0].name == 'img':
@@ -198,14 +204,23 @@ def get_odds_list(html):
                     horse['name'] = m1.group(1)
                     horse['odds'] = float(m1.group(2))
                     horse['rank'] = int(m1.group(3))
+                m11 = re.match('([^0-9\.]*)', lines[0])
+                if m1 is None and m11:
+                    horse['name'] = m11.group(1)
+                    horse['odds'] = 0
+                    horse['rank'] = 0
                 if len(lines) >= 2:
                     m2 = re.match('([0-9]*kg\([^\)]*\))', lines[1])
                     if m2:
                         horse['weight'] = m2.group(1)
             elif j == 7:
                 if len(column.contents) >= 6:
-                    horse['age'] = column.contents[1].text
-                    horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
+                    if column.contents[0].get('class')[0] == 'cloth':
+                        horse['age'] = column.contents[1].text
+                        horse['jocky'] = column.contents[5].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
+                    else:
+                        horse['age'] = column.contents[0].text
+                        horse['jocky'] = column.contents[4].text.strip().replace('☆', '').replace('▲', '').replace('△', '').replace('◇', '').replace('★', '')
             elif j in (8, 10, 12, 14):
                 if isinstance(column, Tag) and len(column.contents) > 0:
                     past_no = f'past{1 + (j - 8) // 2}'
@@ -248,7 +263,7 @@ def get_odds_list(html):
             jocky_width = get_char_count(horse['jocky'], 15)
             print(f"{horse['horse_no']:>2} {horse['name']:{name_width}s} {horse['jocky']:{jocky_width}s} {horse['odds']:>5} {horse['rank']:>2}")
         print()
-    return {'race_title1': race_title1, 'race_title2': race_title2, 'race_time': race_time, 'horse_list': horse_list}
+    return {'race_title1': race_title1, 'race_title2': race_title2, 'grade': grade, 'race_time': race_time, 'horse_list': horse_list}
 
 def get_start_end(pattern):
     if '-' in pattern:
