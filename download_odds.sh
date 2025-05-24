@@ -112,11 +112,26 @@
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502030120250503/0F
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502030120250503/ED
 # https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501010120250503/AE
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502040120250504/3F
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502040120250504/1D
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501020120250504/DE
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502050120250510/18
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502050120250510/F6
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501030120250510/B7
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502060120250511/48
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502060120250511/26
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501040120250511/E7
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502070120250517/29
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502070120250517/07
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501050120250517/C8
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502080120250518/59
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502080120250518/37
+# https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501060120250518/F8
 
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502040120250504/3F
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502040120250504/1D
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501020120250504/DE
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502090120250524/32
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502090120250524/10
+https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501070120250524/D1
 EOF`
 do
   python3 download_odds.py -url=$url $*

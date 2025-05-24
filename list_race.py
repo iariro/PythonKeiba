@@ -6,12 +6,15 @@ import sys
 import keiba_lib
 
 day_filter = None
+filter_jocky = None
 sort_order = 'avg_past'
 for arg in sys.argv:
     if arg.startswith('-day='):
         day_filter = arg[arg.index('=')+1:]
     elif arg.startswith('-sort='):
         sort_order = arg[arg.index('=')+1:]
+    elif arg.startswith('-jocky='):
+        filter_jocky = arg[arg.index('=')+1:]
 
 all_list = []
 with open('odds.json') as odds_json_file, open('race_result.json') as race_json_file:
@@ -42,6 +45,11 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
             odds_list = odds_json[day][location][race_no]['horse_list']
         else:
             odds_list = odds_json[day][location][race_no]
+
+        # 騎手がいるか
+        if filter_jocky is not None and all([filter_jocky not in horse['jocky'] for horse in odds_list]):
+            continue
+
         time = '--:--'
         if 'race_time' in odds_json[day][location][race_no]:
             time = odds_json[day][location][race_no]['race_time']
@@ -144,12 +152,14 @@ with open('odds.json') as odds_json_file, open('race_result.json') as race_json_
         yen_line = []
         if result:
             for item, yen in result.items():
-                if item.endswith('yen'):
+                if 'yen' in item:
                     kake_type = None
                     if item == 'win_yen':
                         kake_type = '単勝'
                     elif item == 'place_yen':
                         kake_type = '複勝'
+                    elif item == 'wide_yen_list':
+                        kake_type = 'ワイド'
                     elif item == 'umaren_yen':
                         kake_type = '馬連'
                     elif item == 'umatan_yen':

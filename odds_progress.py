@@ -5,6 +5,7 @@ import json
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+import keiba_lib
 
 day = None
 location = None
@@ -20,8 +21,19 @@ for opt in sys.argv:
     elif opt.startswith('-odds_thresh='):
         odds_thresh = int(opt.split('=')[1])
 
-with open('odds.json') as odds_file:
-    odds_json = json.load(odds_file)
+with open('odds.json') as odds_json_file, open('race_result.json') as race_json_file:
+    odds_json = json.load(odds_json_file)
+    race_json = json.load(race_json_file)
+
+    result = None
+    if day in race_json:
+        if location in race_json[day]:
+            if race_no in race_json[day][location]:
+                result = race_json[day][location][race_no]
+
+if day not in odds_json:
+    print(day, 'no data')
+    sys.exit()
 
 dts = []
 for history in odds_json[day][location][race_no]['history_list']:
@@ -47,6 +59,23 @@ for history in odds_json[day][location][race_no]['history_list']:
 # 閾値判定
 y_list2 = {horse_no: odds_list for horse_no, odds_list in y_list.items() if all([odds < odds_thresh if odds else True for odds in odds_list])}
 
+dts_result = []
+y_list_result = {}
+if result:
+    dts_result.append(dts[-1])
+    dts_result.append(dts[-1] + datetime.timedelta(minutes=60))
+    dts.append(dts[-1] + datetime.timedelta(minutes=60))
+    for horse_no in y_list2:
+        for record in result['rank_list']:
+            (rank2, horse_no2, horse_name2, age2, jocky2, weight2, ninki2) = keiba_lib.get_rank_record(record)
+            if int(horse_no) == horse_no2 and rank2 <= 5:
+                y_list_result[horse_no] = [y_list[horse_no][-1], rank2 * 3]
+                y_list2[horse_no].append(rank2 * 3)
+                break
+        else:
+            y_list_result[horse_no] = [y_list[horse_no][-1], rank2 * 3]
+            y_list2[horse_no].append(None)
+
 race_time = odds_json[day][location][race_no]['race_time']
 
 horse_name = {}
@@ -57,8 +86,13 @@ for horse in odds_list:
 fig, ax = plt.subplots()
 ax.set_facecolor('lightgray')
 plt.title(f"{day} {location} {race_no}R {race_time}")
-for horse_no in y_list2:
+for i, horse_no in enumerate(y_list2):
     df = pd.DataFrame({'x': dts, 'y': y_list2[horse_no]})
-    ax.plot(df['x'], df['y'], marker='.')
-plt.legend([f"{horse_no} {horse_name[horse_no]}" for horse_no in y_list2])
+    if i < 10:
+        ax.plot(df['x'], df['y'], marker='.')
+    else:
+        ax.plot(df['x'], df['y'], '--', marker='.')
+    #df_result = pd.DataFrame({'x': dts_result, 'y': y_list_result[horse_no]})
+    #ax.plot(df_result['x'], df_result['y'], '--', marker='.')
+plt.legend([f"{horse_no} {horse_name[horse_no] if horse_no in horse_name else '-'}" for horse_no in y_list2])
 plt.show()

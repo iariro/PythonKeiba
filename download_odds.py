@@ -65,9 +65,10 @@ for i, race in enumerate(race_list):
             history_list = odds_json[date][location][race_no]['history_list']
         now = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
         history_time = now if race_datetime > now else race_datetime
-        if compare_last_history(history_list, history) == False and len(history) > 0:
-            history_list.append({'datetime': history_time, 'list': history})
-            history_up = '*'
+        if history_time.split()[0] == date.split()[0]:
+            if compare_last_history(history_list, history) == False and len(history) > 0:
+                history_list.append({'datetime': history_time, 'list': history})
+                history_up = '*'
         if date not in odds_json:
             odds_json[date] = {}
         if location not in odds_json[date]:

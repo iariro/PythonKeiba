@@ -109,11 +109,26 @@
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502020120250427/85
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502020120250427/63
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0103202501060120250427/8C
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502030120250503/CB
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502030120250503/A9
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501010120250503/6A
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502041220250504/02
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502041220250504/E0
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501021220250504/A1
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502050120250510/D4
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502050120250510/B2
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501030120250510/73
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502060120250511/04
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502060120250511/E2
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501040120250511/A3
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502070120250517/E5
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502070120250517/C3
+# https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501050120250517/84
 START_TIME=$(date "+%T")
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502030120250503/CB
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502030120250503/A9
-https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501010120250503/6A
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502080120250518/15
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502080120250518/F3
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501060120250518/B4
 EOF`
 do
   python3 download_result.py -url=$url
