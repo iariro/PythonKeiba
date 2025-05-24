@@ -214,9 +214,9 @@
 # https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501060120250518/B4
 START_TIME=$(date "+%T")
 for url in `cat << EOF
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0105202502090120250524/32
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0108202502090120250524/10
-https://www.jra.go.jp/JRADB/accessD.html?CNAME=pw01dde0104202501070120250524/D1
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0105202502090120250524/EE
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0108202502090120250524/CC
+https://www.jra.go.jp/JRADB/accessS.html?CNAME=pw01sde0104202501070120250524/8D
 EOF`
 do
   python3 download_result.py -url=$url
